@@ -110,7 +110,7 @@ gefg_cas03,37,214,1	duplicate(InsideFlagsG3)	Yesnelph#13	GUILD_FLAG
 gefg_cas03,34,208,1	duplicate(InsideFlagsG3)	Yesnelph#14	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
-geffen,120,132,0	duplicate(InsideFlagsG3)	Yesnelph#15	GUILD_FLAG
+//geffen,120,132,0	duplicate(InsideFlagsG3)	Yesnelph#15	GUILD_FLAG
 
 //== Kafra Employee ========================================
 gefg_cas03,116,89,5	duplicate(guildkafra)	Kafra Staff#gefg_cas03	4_F_KAFRA1

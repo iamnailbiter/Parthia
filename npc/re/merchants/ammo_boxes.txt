@@ -38,3 +38,4 @@ izlude_a,74,104,3	duplicate(mdk)	Magazine Dealer Kenny#a	4_M_01
 izlude_b,74,104,3	duplicate(mdk)	Magazine Dealer Kenny#b	4_M_01
 izlude_c,74,104,3	duplicate(mdk)	Magazine Dealer Kenny#c	4_M_01
 izlude_d,74,104,3	duplicate(mdk)	Magazine Dealer Kenny#d	4_M_01
+prontera,145,231,5	duplicate(mdk)	Magazine Dealer Kenny#e	4_M_ROKI

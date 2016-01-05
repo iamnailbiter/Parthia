@@ -1002,3 +1002,4 @@ c_tower3_
 //
 //mymap	1250
 //mymap-2
+npc_in

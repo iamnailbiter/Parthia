@@ -120,3 +120,7 @@ pvp_2vs2	mapflag	pvp
 turbo_e_4	mapflag	pvp
 turbo_e_8	mapflag	pvp
 turbo_e_16	mapflag	pvp
+
+//GvG
+guild_vs3	mapflag	pvp
+guild_vs4	mapflag	pvp

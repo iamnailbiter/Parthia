@@ -1,0 +1,20 @@
+// Portals
+npc_in,156,26,0	warp	npcin01	2,2,prontera,138,187
+npc_in,131,46,0	warp	npcin02	2,2,npc_in,31,118
+npc_in,31,122,0	warp	npcin03	2,2,npc_in,131,42
+
+// Sign Board
+prontera,133,189,7	script	Main Office#prt	4_BOARD3,{
+	end;
+	OnInit:
+		waitingroom "Main Office",0;
+		end;
+}
+
+npc_in,129,41,5	script	Elevator#npcin01	4_BULLETIN_BOARD2,{
+	end;
+	OnInit:
+		waitingroom "Elevator",0;
+		end;
+}
+npc_in,29,118,5	duplicate(Elevator#npcin01)	Elevator#npcin02	4_BULLETIN_BOARD2

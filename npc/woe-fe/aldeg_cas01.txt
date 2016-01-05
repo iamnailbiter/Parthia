@@ -118,7 +118,7 @@ aldeg_cas01,203,150,4	duplicate(InsideFlagsA1)	Neuschwanstein#21	GUILD_FLAG
 aldeg_cas01,210,150,4	duplicate(InsideFlagsA1)	Neuschwanstein#22	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
-aldebaran,152,97,4	duplicate(InsideFlagsA1)	Neuschwanstein#23	GUILD_FLAG
+//aldebaran,152,97,4	duplicate(InsideFlagsA1)	Neuschwanstein#23	GUILD_FLAG
 
 //== Kafra Employee ========================================
 aldeg_cas01,218,170,0	duplicate(guildkafra)	Kafra Staff#aldeg_cas01	4_F_KAFRA1

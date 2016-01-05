@@ -203,3 +203,6 @@ nguild_prt	mapflag	noicewall
 // Poring War ====================
 poring_w01	mapflag	noicewall
 poring_w02	mapflag	noicewall
+
+// NPC Room
+npc_in	mapflag	noicewall

@@ -473,3 +473,5 @@ nyd_dun02	mapflag	noteleport
 poring_w01	mapflag	noteleport
 poring_w02	mapflag	noteleport
 poring_w02	mapflag	monster_noteleport
+
+npc_in	mapflag	noteleport

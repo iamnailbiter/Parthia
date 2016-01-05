@@ -38,14 +38,14 @@
 //=========================================================================
 
 //== Prontera ==============================================
-prontera,160,330,4	script	Guard#pront::prtguard	8W_SOLDIER,{
+prontera,159,330,4	script	Guard#pront::prtguard	8W_SOLDIER,{
 	mes "[Prontera Guard]";
 	mes "Welcome to Prontera.";
 	close;
 }
-prontera,223,99,1	duplicate(prtguard)	Guard#2pront	8W_SOLDIER
+prontera,223,98,1	duplicate(prtguard)	Guard#2pront	8W_SOLDIER
 prontera,229,104,5	duplicate(prtguard)	Guard#3pront	8W_SOLDIER
-prontera,47,339,5	duplicate(prtguard)	Guard#4pront	8W_SOLDIER
+prontera,47,338,5	duplicate(prtguard)	Guard#4pront	8W_SOLDIER
 
 prontera,101,288,3	script	Shuger#pront	4W_M_02,{
 	mes "[Shuger]";
@@ -104,7 +104,7 @@ prontera,160,133,2	script	YuPi#pront	8_F,{
 	close;
 }
 
-prontera,149,202,2	script	YuNa#pront	8_F_GIRL,{
+prontera,147,207,2	script	YuNa#pront	8_F_GIRL,{
 	mes "[YuNa]";
 	mes "Behold...";
 	mes "Mighty Odin!";

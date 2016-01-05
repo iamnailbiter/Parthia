@@ -32,5 +32,6 @@
 //= Disables skill MC_VENDING on a map.
 //=========================================================================
 
-//prontera	mapflag	novending
-//prt_in	mapflag	novending
+prontera	mapflag	novending
+prt_in	mapflag	novending
+npc_in	mapflag	novending

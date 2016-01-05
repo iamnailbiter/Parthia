@@ -107,7 +107,7 @@ gefg_cas02,68,47,2	duplicate(InsideFlagsG2)	Eeyorbriggar#10	GUILD_FLAG
 gefg_cas02,68,36,2	duplicate(InsideFlagsG2)	Eeyorbriggar#11	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
-geffen,112,129,1	duplicate(InsideFlagsG2)	Eeyorbriggar#12	GUILD_FLAG
+//geffen,112,129,1	duplicate(InsideFlagsG2)	Eeyorbriggar#12	GUILD_FLAG
 
 //== Kafra Employee ========================================
 gefg_cas02,23,66,3	duplicate(guildkafra)	Kafra Staff#gefg_cas02	4_F_KAFRA1

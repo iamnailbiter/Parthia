@@ -112,7 +112,7 @@ aldeg_cas02,32,213,2	duplicate(InsideFlagsA2)	Hohenschwangau#15	GUILD_FLAG
 aldeg_cas02,121,29,2	duplicate(InsideFlagsA2)	Hohenschwangau#16	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
-aldebaran,149,97,4	duplicate(InsideFlagsA2)	Hohenschwangau#17	GUILD_FLAG
+//aldebaran,149,97,4	duplicate(InsideFlagsA2)	Hohenschwangau#17	GUILD_FLAG
 
 //== Kafra Employee ========================================
 aldeg_cas02,84,74,0	duplicate(guildkafra)	Kafra Staff#aldeg_cas02	4_F_KAFRA1

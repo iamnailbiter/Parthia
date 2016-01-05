@@ -1,0 +1,26 @@
+//Tool Dealer
+prontera,163,195,5	trader	Tool Dealer#par_prt	4_F_FRUIT,{
+OnInit:
+	sellitem Spectacles;
+	sellitem Wing_Of_Fly;
+	sellitem Wing_Of_Butterfly;
+	sellitem Leaf_Of_Yggdrasil;
+	sellitem Grape_Juice;
+	sellitem Red_Potion;
+	sellitem Orange_Potion;
+	sellitem Yellow_Potion;
+	sellitem White_Potion;
+	sellitem Green_Potion;
+	sellitem Center_Potion;
+	sellitem Awakening_Potion;
+	sellitem Berserk_Potion;
+	sellitem Booby_Trap;
+	sellitem Blue_Gemstone;
+	sellitem Red_Gemstone;
+	sellitem Yellow_Gemstone;
+	sellitem Arrow;
+	sellitem Silver_Arrow;
+	sellitem Fire_Arrow;
+	sellitem Venom_Knife;
+	sellitem Empty_Bottle;
+}

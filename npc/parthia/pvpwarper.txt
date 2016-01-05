@@ -1,0 +1,29 @@
+prontera,161,193,5	script	PvP Warper	4_F_KHALITZBURG,{
+
+set .@room1$,"guild_vs3"; //Insert map name into quotation marks & adjust to your desire
+set .@room2$,"guild_vs4"; //Insert map name into quotation marks & adjust to your desire
+set .@room3$,"guild_vs1"; //Insert map name into quotation marks & adjust to your desire
+set .@name$,"[PvP Warper]"; //NPC Dialogue name
+
+mes .@name$;
+mes "Hello, I'm the PvP Warper I can warp you to one of the 3 PvP maps available.";
+mes "Please select one of the warps for me to continue.";
+switch(select("All Levels ["+getmapusers(.@room1$)+"]:Transcendent & Below ["+getmapusers(.@room2$)+"]:Guild Arena ["+getmapusers(.@room3$)+"]:BG Waiting Room")){
+case 1:
+	warp .@room1$,0,0;
+	end;
+case 2:
+	if(Class >= 4000 && Class <= 4022){ //Allows any Trans Class, High Novice - Paladin
+	warp .@room2$,0,0;
+	end;
+	}
+close;
+case 3:
+	warp .@room3$,0,0;
+	end;
+close;
+case 4:
+	warp "bat_room",154,150;
+	end;
+}
+}

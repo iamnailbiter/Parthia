@@ -115,7 +115,7 @@ aldeg_cas03,207,75,2	duplicate(InsideFlagsA3)	Nuernberg#18	GUILD_FLAG
 aldeg_cas03,96,62,2	duplicate(InsideFlagsA3)	Nuernberg#19	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
-aldebaran,134,97,4	duplicate(InsideFlagsA3)	Nuernberg#20	GUILD_FLAG
+//aldebaran,134,97,4	duplicate(InsideFlagsA3)	Nuernberg#20	GUILD_FLAG
 
 //== Kafra Employee ========================================
 aldeg_cas03,118,76,0	duplicate(guildkafra)	Kafra Staff#aldeg_cas03	4_F_KAFRA1

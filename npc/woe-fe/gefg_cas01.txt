@@ -106,7 +106,7 @@ gefg_cas01,59,16,4	duplicate(InsideFlagsG1)	Repherion#9	GUILD_FLAG
 gefg_cas01,64,16,4	duplicate(InsideFlagsG1)	Repherion#10	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
-geffen,109,123,2	duplicate(InsideFlagsG1)	Repherion#11	GUILD_FLAG
+//geffen,109,123,2	duplicate(InsideFlagsG1)	Repherion#11	GUILD_FLAG
 
 //== Kafra Employee ========================================
 gefg_cas01,83,47,3	duplicate(guildkafra)	Kafra Staff#gefg_cas01	4_F_KAFRA1

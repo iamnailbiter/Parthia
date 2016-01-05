@@ -106,7 +106,7 @@ gefg_cas05,62,66,4	duplicate(InsideFlagsG5)	Mersetzdeitz#9	GUILD_FLAG
 gefg_cas05,69,66,4	duplicate(InsideFlagsG5)	Mersetzdeitz#10	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
-geffen,131,123,6	duplicate(InsideFlagsG5)	Mersetzdeitz#11	GUILD_FLAG
+//geffen,131,123,6	duplicate(InsideFlagsG5)	Mersetzdeitz#11	GUILD_FLAG
 
 //== Kafra Employee ========================================
 gefg_cas05,61,52,5	duplicate(guildkafra)	Kafra Staff#gefg_cas05	4_F_KAFRA1

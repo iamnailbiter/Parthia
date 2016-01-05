@@ -11710,6 +11710,7 @@ BUILDIN(getmapflag)
 			case MF_RESET:              script_pushint(st,map->list[m].flag.reset); break;
 			case MF_NOTOMB:             script_pushint(st,map->list[m].flag.notomb); break;
 			case MF_NOCASHSHOP:         script_pushint(st,map->list[m].flag.nocashshop); break;
+			case MF_NOVIEWID:			script_pushint(st,map->list[m].flag.noviewid); break;
 		}
 	}
 
@@ -11826,6 +11827,7 @@ BUILDIN(setmapflag) {
 			case MF_RESET:              map->list[m].flag.reset = 1; break;
 			case MF_NOTOMB:             map->list[m].flag.notomb = 1; break;
 			case MF_NOCASHSHOP:         map->list[m].flag.nocashshop = 1; break;
+			case MF_NOVIEWID:           map->list[m].flag.noviewid = (val <= 0) ? 0 : val; break;
 		}
 	}
 
@@ -11912,6 +11914,7 @@ BUILDIN(removemapflag) {
 			case MF_RESET:              map->list[m].flag.reset = 0; break;
 			case MF_NOTOMB:             map->list[m].flag.notomb = 0; break;
 			case MF_NOCASHSHOP:         map->list[m].flag.nocashshop = 0; break;
+			case MF_NOVIEWID:           map->list[m].flag.noviewid = 0; break;
 		}
 	}
 
@@ -18998,7 +19001,7 @@ BUILDIN(queuesize)
 	if (idx < 0 || idx >= VECTOR_LENGTH(script->hq) || !VECTOR_INDEX(script->hq, idx).valid) {
 		ShowWarning("buildin_queuesize: unknown queue id %d\n",idx);
 		script_pushint(st, 0);
-		return true;
+		return false;
 	}
 
 	script_pushint(st, VECTOR_LENGTH(VECTOR_INDEX(script->hq, idx).entries));
@@ -19150,7 +19153,7 @@ BUILDIN(queueopt)
 	if (idx < 0 || idx >= VECTOR_LENGTH(script->hq) || !VECTOR_INDEX(script->hq, idx).valid) {
 		ShowWarning("buildin_queueopt: unknown queue id %d\n",idx);
 		script_pushint(st, 0);
-		return true;
+		return false;
 	}
 
 	queue = &VECTOR_INDEX(script->hq, idx);
@@ -19177,7 +19180,7 @@ BUILDIN(queueopt)
 		default:
 			ShowWarning("buildin_queueopt: unsupported optionType %d\n",var);
 			script_pushint(st, 0);
-			return true;
+			return false;
 	}
 	script_pushint(st, 1);
 	return true;
@@ -19277,7 +19280,7 @@ BUILDIN(queueiterator)
 	if (qid < 0 || qid >= VECTOR_LENGTH(script->hq) || !VECTOR_INDEX(script->hq, qid).valid || !(queue = script->queue(qid))) {
 		ShowWarning("queueiterator: invalid queue id %d\n",qid);
 		script_pushint(st, -1);
-		return true;
+		return false;
 	}
 
 	ARR_FIND(0, VECTOR_LENGTH(script->hqi), i, !VECTOR_INDEX(script->hqi, i).valid);
@@ -19318,7 +19321,7 @@ BUILDIN(qiget)
 	if (idx < 0 || idx >= VECTOR_LENGTH(script->hqi) || !VECTOR_INDEX(script->hqi, idx).valid) {
 		ShowWarning("buildin_qiget: unknown queue iterator id %d\n",idx);
 		script_pushint(st, 0);
-		return true;
+		return false;
 	}
 
 	it = &VECTOR_INDEX(script->hqi, idx);
@@ -19352,7 +19355,7 @@ BUILDIN(qicheck)
 	if (idx < 0 || idx >= VECTOR_LENGTH(script->hqi) || !VECTOR_INDEX(script->hqi, idx).valid) {
 		ShowWarning("buildin_qicheck: unknown queue iterator id %d\n",idx);
 		script_pushint(st, 0);
-		return true;
+		return false;
 	}
 
 	it = &VECTOR_INDEX(script->hqi, idx);
@@ -19383,7 +19386,7 @@ BUILDIN(qiclear)
 	if (idx < 0 || idx >= VECTOR_LENGTH(script->hqi) || !VECTOR_INDEX(script->hqi, idx).valid) {
 		ShowWarning("buildin_qiclear: unknown queue iterator id %d\n",idx);
 		script_pushint(st, 0);
-		return true;
+		return false;
 	}
 
 	it = &VECTOR_INDEX(script->hqi, idx);

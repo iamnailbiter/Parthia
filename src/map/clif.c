@@ -1004,7 +1004,12 @@ void clif_set_unit_idle(struct block_list* bl, struct map_session_data *tsd, enu
 	p.PacketLength = sizeof(p);
 	p.objecttype = clif_bl_type(bl);
 #endif
+#if PACKETVER >= 20131223
+	p.AID = bl->id;
+	p.GID = (sd) ? sd->status.char_id : 0;	// CCODE
+#else
 	p.GID = bl->id;
+#endif
 	p.speed = status->get_speed(bl);
 	p.bodyState = (sc) ? sc->opt1 : 0;
 	p.healthState = (sc) ? sc->opt2 : 0;
@@ -1042,8 +1047,8 @@ void clif_set_unit_idle(struct block_list* bl, struct map_session_data *tsd, enu
 #if PACKETVER >= 20080102
 	p.font = (sd) ? sd->status.font : 0;
 #endif
-#if PACKETVER >= 20150000 //actual 20120221
-	if (bl->type == BL_MOB && battle_config.show_monster_hp_bar) {
+#if PACKETVER >= 20120221
+	if (battle_config.show_monster_hp_bar && bl->type == BL_MOB && status_get_hp(bl) < status_get_max_hp(bl)) {
 		p.maxHP = status_get_max_hp(bl);
 		p.HP = status_get_hp(bl);
 		p.isBoss = ( ((TBL_MOB*)bl)->spawn && ((TBL_MOB*)bl)->spawn->state.boss ) ? 1 : 0;
@@ -1052,6 +1057,9 @@ void clif_set_unit_idle(struct block_list* bl, struct map_session_data *tsd, enu
 		p.HP = -1;
 		p.isBoss = 0;
 	}
+#endif
+#if PACKETVER >= 20150513
+	p.body = 0;
 #endif
 
 	clif->send(&p,sizeof(p),tsd?&tsd->bl:bl,target);
@@ -1136,7 +1144,12 @@ void clif_spawn_unit(struct block_list* bl, enum send_target target) {
 	p.PacketLength = sizeof(p);
 	p.objecttype = clif_bl_type(bl);
 #endif
+#if PACKETVER >= 20131223
+	p.AID = bl->id;
+	p.GID = (sd) ? sd->status.char_id : 0;	// CCODE
+#else
 	p.GID = bl->id;
+#endif
 	p.speed = status->get_speed(bl);
 	p.bodyState = (sc) ? sc->opt1 : 0;
 	p.healthState = (sc) ? sc->opt2 : 0;
@@ -1173,8 +1186,8 @@ void clif_spawn_unit(struct block_list* bl, enum send_target target) {
 #if PACKETVER >= 20080102
 	p.font = (sd) ? sd->status.font : 0;
 #endif
-#if PACKETVER >= 20150000 //actual 20120221
-	if (bl->type == BL_MOB && battle_config.show_monster_hp_bar) {
+#if PACKETVER >= 20120221
+	if (battle_config.show_monster_hp_bar && bl->type == BL_MOB && status_get_hp(bl) < status_get_max_hp(bl)) {
 		p.maxHP = status_get_max_hp(bl);
 		p.HP = status_get_hp(bl);
 		p.isBoss = ( ((TBL_MOB*)bl)->spawn && ((TBL_MOB*)bl)->spawn->state.boss ) ? 1 : 0;
@@ -1183,6 +1196,9 @@ void clif_spawn_unit(struct block_list* bl, enum send_target target) {
 		p.HP = -1;
 		p.isBoss = 0;
 	}
+#endif
+#if PACKETVER >= 20150513
+	p.body = 0;
 #endif
 	if( disguised(bl) ) {
 		nullpo_retv(sd);
@@ -1222,7 +1238,12 @@ void clif_set_unit_walking(struct block_list* bl, struct map_session_data *tsd, 
 #if PACKETVER >= 20071106
 	p.objecttype = clif_bl_type(bl);
 #endif
+#if PACKETVER >= 20131223
+	p.AID = bl->id;
+	p.GID = (tsd) ? tsd->status.char_id : 0;	// CCODE
+#else
 	p.GID = bl->id;
+#endif
 	p.speed = status->get_speed(bl);
 	p.bodyState = (sc) ? sc->opt1 : 0;
 	p.healthState = (sc) ? sc->opt2 : 0;
@@ -1255,8 +1276,8 @@ void clif_set_unit_walking(struct block_list* bl, struct map_session_data *tsd, 
 #if PACKETVER >= 20080102
 	p.font = (sd) ? sd->status.font : 0;
 #endif
-#if PACKETVER >= 20150000 //actual 20120221
-	if (bl->type == BL_MOB && battle_config.show_monster_hp_bar) {
+#if PACKETVER >= 20120221
+	if (battle_config.show_monster_hp_bar && bl->type == BL_MOB && status_get_hp(bl) < status_get_max_hp(bl)) {
 		p.maxHP = status_get_max_hp(bl);
 		p.HP = status_get_hp(bl);
 		p.isBoss = ( ((TBL_MOB*)bl)->spawn && ((TBL_MOB*)bl)->spawn->state.boss ) ? 1 : 0;
@@ -1265,6 +1286,9 @@ void clif_set_unit_walking(struct block_list* bl, struct map_session_data *tsd, 
 		p.HP = -1;
 		p.isBoss = 0;
 	}
+#endif
+#if PACKETVER >= 20150513
+	p.body = 0;
 #endif
 
 	clif->send(&p,sizeof(p),tsd?&tsd->bl:bl,target);
@@ -4173,7 +4197,7 @@ void clif_getareachar_unit(struct map_session_data* sd,struct block_list *bl) {
 					clif->specialeffect_single(bl,423,sd->fd);
 				else if(md->special_state.size==SZ_MEDIUM)
 					clif->specialeffect_single(bl,421,sd->fd);
-#if PACKETVER >= 20120404
+#if (PACKETVER >= 20120404 && PACKETVER < 20131223)
 				if (battle_config.show_monster_hp_bar && !(md->status.mode&MD_BOSS)) {
 					int i;
 					for(i = 0; i < DAMAGELOG_SIZE; i++) {// must show hp bar to all char who already hit the mob.
@@ -4224,6 +4248,7 @@ int clif_calc_walkdelay(struct block_list *bl,int delay, int type, int damage, i
 /// Sends a 'damage' packet (src performs action on dst)
 /// 008a <src ID>.L <dst ID>.L <server tick>.L <src speed>.L <dst speed>.L <damage>.W <div>.W <type>.B <damage2>.W (ZC_NOTIFY_ACT)
 /// 02e1 <src ID>.L <dst ID>.L <server tick>.L <src speed>.L <dst speed>.L <damage>.L <div>.W <type>.B <damage2>.L (ZC_NOTIFY_ACT2)
+/// 08c8 <src ID>.L <dst ID>.L <server tick>.L <src speed>.L <dst speed>.L <damage>.L <IsSPDamage>.B <div>.W <type>.B <damage2>.L (ZC_NOTIFY_ACT2)
 /// type: @see enum battle_dmg_type
 ///     for BDT_NORMAL: [ damage: total damage, div: amount of hits, damage2: assassin dual-wield damage ]
 int clif_damage(struct block_list* src, struct block_list* dst, int sdelay, int ddelay, int64 in_damage, short div, unsigned char type, int64 in_damage2) {
@@ -4271,6 +4296,9 @@ int clif_damage(struct block_list* src, struct block_list* dst, int sdelay, int 
 		p.damage = damage;
 		p.leftDamage = damage2;
 	}
+#if PACKETVER >= 20131223
+	p.is_sp_damaged = 0;	// [ToDo] IsSPDamage - Displays blue digits.
+#endif
 
 	if(disguised(dst)) {
 		clif->send(&p,sizeof(p),dst,AREA_WOS);
@@ -4953,84 +4981,92 @@ int clif_skill_damage(struct block_list *src, struct block_list *dst, int64 tick
 	nullpo_ret(src);
 	nullpo_ret(dst);
 
-	damage = (int)cap_value(in_damage,INT_MIN,INT_MAX);
-	type = clif_calc_delay(type,div,damage,ddelay);
+	damage = (int)cap_value(in_damage, INT_MIN, INT_MAX);
+	type = clif_calc_delay(type, div, damage, ddelay);
 
 #if PACKETVER >= 20131223
-	if( type == 6 ) type = 8; //bugreport:8263
+	if (type == BDT_SKILL) type = BDT_MULTIHIT; //bugreport:8263
 #endif
 
-	if( ( sc = status->get_sc(dst) ) && sc->count ) {
-		if(sc->data[SC_ILLUSION] && damage)
-			damage = damage*(sc->data[SC_ILLUSION]->val2) + rnd()%100;
+	if ((sc = status->get_sc(dst)) && sc->count) {
+		if (sc->data[SC_ILLUSION] && damage)
+			damage = damage * (sc->data[SC_ILLUSION]->val2) + rnd() % 100;
 	}
 
 #if PACKETVER < 3
-	WBUFW(buf,0)=0x114;
-	WBUFW(buf,2)=skill_id;
-	WBUFL(buf,4)=src->id;
-	WBUFL(buf,8)=dst->id;
-	WBUFL(buf,12)=(uint32)tick;
-	WBUFL(buf,16)=sdelay;
-	WBUFL(buf,20)=ddelay;
+	WBUFW(buf, 0) = 0x114;
+	WBUFW(buf, 2) = skill_id;
+	WBUFL(buf, 4) = src->id;
+	WBUFL(buf, 8) = dst->id;
+	WBUFL(buf, 12) = (uint32)tick;
+	WBUFL(buf, 16) = sdelay;
+	WBUFL(buf, 20) = ddelay;
 	if (battle_config.hide_woe_damage && map_flag_gvg2(src->m)) {
-		WBUFW(buf,24)=damage?div:0;
+		WBUFW(buf, 24) = damage ? div : 0;
 	} else {
-		WBUFW(buf,24)=damage;
+		WBUFW(buf, 24) = damage;
 	}
-	WBUFW(buf,26)=skill_lv;
-	WBUFW(buf,28)=div;
-	WBUFB(buf,30)=type;
+	WBUFW(buf, 26) = skill_lv;
+	WBUFW(buf, 28) = div;
+	WBUFB(buf, 30) = type;
 	if (disguised(dst)) {
-		clif->send(buf,packet_len(0x114),dst,AREA_WOS);
-		WBUFL(buf,8)=-dst->id;
-		clif->send(buf,packet_len(0x114),dst,SELF);
+		clif->send(buf, packet_len(0x114), dst, AREA_WOS);
+		WBUFL(buf, 8) = -dst->id;
+		clif->send(buf, packet_len(0x114), dst, SELF);
 	} else
-		clif->send(buf,packet_len(0x114),dst,AREA);
+		clif->send(buf, packet_len(0x114), dst, AREA);
 
-	if(disguised(src)) {
-		WBUFL(buf,4)=-src->id;
+	if (disguised(src)) {
+		WBUFL(buf, 4) = -src->id;
 		if (disguised(dst))
-			WBUFL(buf,8)=dst->id;
-		if(damage > 0)
-			WBUFW(buf,24)=-1;
-		clif->send(buf,packet_len(0x114),src,SELF);
+			WBUFL(buf, 8) = dst->id;
+		if (damage > 0)
+			WBUFW(buf, 24) = -1;
+		clif->send(buf, packet_len(0x114), src, SELF);
 	}
 #else
-	WBUFW(buf,0)=0x1de;
-	WBUFW(buf,2)=skill_id;
-	WBUFL(buf,4)=src->id;
-	WBUFL(buf,8)=dst->id;
-	WBUFL(buf,12)=(uint32)tick;
-	WBUFL(buf,16)=sdelay;
-	WBUFL(buf,20)=ddelay;
+	WBUFW(buf, 0) = 0x1de;
+	WBUFW(buf, 2) = skill_id;
+	WBUFL(buf, 4) = src->id;
+	WBUFL(buf, 8) = dst->id;
+	WBUFL(buf, 12) = (uint32)tick;
+	WBUFL(buf, 16) = sdelay;
+	WBUFL(buf, 20) = ddelay;
 	if (battle_config.hide_woe_damage && map_flag_gvg2(src->m)) {
-		WBUFL(buf,24)=damage?div:0;
+		WBUFL(buf, 24) = damage ? div : 0;
 	} else {
-		WBUFL(buf,24)=damage;
+		WBUFL(buf, 24) = damage;
 	}
-	WBUFW(buf,28)=skill_lv;
-	WBUFW(buf,30)=div;
-	WBUFB(buf,32)=type;
+	WBUFW(buf, 28) = skill_lv;
+	WBUFW(buf, 30) = div;
+	// For some reason, late 2013 and newer clients have
+	// a issue that causes players and monsters to endure
+	// type 6 (ACTION_SKILL) skills. So we have to do a small
+	// hack to set all type 6 to be sent as type 8 ACTION_ATTACK_MULTIPLE
+#if PACKETVER < 20131223
+ 	WBUFB(buf, 32) = type;
+#else
+	WBUFB(buf, 32) = (type == BDT_SKILL) ? BDT_MULTIHIT : type;
+#endif
 	if (disguised(dst)) {
-		clif->send(buf,packet_len(0x1de),dst,AREA_WOS);
+		clif->send(buf, packet_len(0x1de), dst, AREA_WOS);
 		WBUFL(buf,8)=-dst->id;
-		clif->send(buf,packet_len(0x1de),dst,SELF);
+		clif->send(buf, packet_len(0x1de), dst, SELF);
 	} else
-		clif->send(buf,packet_len(0x1de),dst,AREA);
+		clif->send(buf, packet_len(0x1de), dst, AREA);
 
-	if(disguised(src)) {
-		WBUFL(buf,4)=-src->id;
+	if (disguised(src)) {
+		WBUFL(buf, 4) = -src->id;
 		if (disguised(dst))
-			WBUFL(buf,8)=dst->id;
-		if(damage > 0)
-			WBUFL(buf,24)=-1;
-		clif->send(buf,packet_len(0x1de),src,SELF);
+			WBUFL(buf, 8) = dst->id;
+		if (damage > 0)
+			WBUFL(buf, 24) = -1;
+		clif->send(buf, packet_len(0x1de), src, SELF);
 	}
 #endif
 
 	//Because the damage delay must be synced with the client, here is where the can-walk tick must be updated. [Skotlex]
-	return clif->calc_walkdelay(dst,ddelay,type,damage,div);
+	return clif->calc_walkdelay(dst, ddelay, type, damage, div);
 }
 
 /// Ground skill attack effect and damage (ZC_NOTIFY_SKILL_POSITION).
@@ -17468,18 +17504,18 @@ void clif_maptypeproperty2(struct block_list *bl,enum send_target t) {
 
 	p.PacketType = maptypeproperty2Type;
 	p.type = 0x28;
-	p.flag.party = map->list[bl->m].flag.pvp ? 1 : 0;
-	p.flag.guild = (map->list[bl->m].flag.battleground || map_flag_gvg(bl->m)) ? 1 : 0;
-	p.flag.siege = (map->list[bl->m].flag.battleground || map_flag_gvg2(bl->m)) ? 1: 0;
-	p.flag.mineffect = map_flag_gvg(bl->m) ? 1 : ( (sd && sd->state.lesseffect) ? 1 : 0); // Forcing /mineffect in castles during WoE (probably redundant? I'm not sure)
-	p.flag.nolockon = 0; // TODO
-	p.flag.countpk = map->list[bl->m].flag.pvp ? 1 : 0;
-	p.flag.nopartyformation = map->list[bl->m].flag.partylock ? 1 : 0;
-	p.flag.bg = map->list[bl->m].flag.battleground ? 1 : 0;
-	p.flag.noitemconsumption = 0; // TODO
-	p.flag.summonstarmiracle = 0; // TODO
-	p.flag.usecart = 1; // TODO
-	p.flag.SpareBits = 0;
+	p.flag.party = map->list[bl->m].flag.pvp ? 1 : 0;	//PARTY
+	p.flag.guild = (map->list[bl->m].flag.battleground || map_flag_gvg(bl->m)) ? 1 : 0;	// GUILD
+	p.flag.siege = (map->list[bl->m].flag.battleground || map_flag_gvg2(bl->m)) ? 1: 0;	// SIEGE
+	p.flag.mineffect = map_flag_gvg(bl->m) ? 1 : ( (sd && sd->state.lesseffect) ? 1 : 0);	// USE_SIMPLE_EFFECT - Forcing /mineffect in castles during WoE (probably redundant? I'm not sure)
+	p.flag.nolockon = 0; // DISABLE_LOCKON - TODO
+	p.flag.countpk = map->list[bl->m].flag.pvp ? 1 : 0;	// COUNT_PK
+	p.flag.nopartyformation = map->list[bl->m].flag.partylock ? 1 : 0;	// NO_PARTY_FORMATION
+	p.flag.bg = map->list[bl->m].flag.battleground ? 1 : 0;	// BATTLEFIELD
+	p.flag.nocostume = (map->list[bl->m].flag.noviewid & EQP_COSTUME) ? 1 : 0; // DISABLE_COSTUMEITEM - Disables Costume Sprite
+	p.flag.usecart = 1; // USECART - TODO
+	p.flag.summonstarmiracle = 0; // SUNMOONSTAR_MIRACLE - TODO
+	p.flag.SpareBits = 0;	// UNUSED
 
 	clif->send(&p,sizeof(p),bl,t);
 #endif
@@ -18513,6 +18549,19 @@ void clif_cancelmergeitem (int fd, struct map_session_data *sd)
 {
 	//Track The merge item cancelation ?
 	return;
+}
+
+void clif_dressroom_open(struct map_session_data *sd, int view)
+{
+	int fd;
+
+	nullpo_retv(sd);
+
+	fd = sd->fd;
+	WFIFOHEAD(fd,packet_len(0xa02));
+	WFIFOW(fd,0)=0xa02;
+	WFIFOW(fd,2)=view;
+	WFIFOSET(fd,packet_len(0xa02));
 }
 
 /* */
@@ -19570,4 +19619,5 @@ void clif_defaults(void) {
 	/* */
 	clif->add_random_options = clif_add_random_options;
 	clif->pHotkeyRowShift = clif_parse_HotkeyRowShift;
+	clif->dressroom_open = clif_dressroom_open;
 }

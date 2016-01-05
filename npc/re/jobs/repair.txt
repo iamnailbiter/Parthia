@@ -33,7 +33,7 @@
 //= 1.2
 //=========================================================================
 
-prt_in,38,104,4	script	Valerie	4_F_VALKYRIE,{
+prt_in,111,76,5	script	Valerie	4_F_VALKYRIE,{
 	if (checkweight(Knife,1) == 0) {
 		mes "I think you have too many items. Let's try it again after you take some out.";
 		close;
