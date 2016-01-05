@@ -29,7 +29,7 @@
 //= [Stolao] 
 //= Email: Taingram11@gmail.com
 //============================================================
--	script	LOGIN	-1,{
+-	script	LOGIN	FAKE_NPC,{
 OnWhisperGlobal:
 OnLoginCmnd:
 OnPCLoginEvent:

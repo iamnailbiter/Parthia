@@ -7253,7 +7253,7 @@ BUILDIN(getitem2)
 		if (item_data == NULL)
 			return -1;
 		if(item_data->type==IT_WEAPON || item_data->type==IT_ARMOR) {
-			if(ref > MAX_REFINE) ref = MAX_REFINE;
+			ref = cap_value(ref, 0, MAX_REFINE);
 		}
 		else if(item_data->type==IT_PETEGG) {
 			iden = 1;
@@ -9064,6 +9064,30 @@ BUILDIN(getgmlevel)
 		return true;// no player attached, report source
 
 	script_pushint(st, pc_get_group_level(sd));
+
+	return true;
+}
+
+/// set the group ID of the player.
+/// setgroupid(<new group id>{,"<character name>"|<account id>})
+/// return 1 on success, 0 if failed.
+BUILDIN(setgroupid) {
+	struct map_session_data* sd = NULL;
+	int new_group = script_getnum(st, 2);
+
+	if (script_hasdata(st, 3)) {
+		if (script_isstringtype(st, 3))
+			sd = script->nick2sd(st, script_getstr(st, 3));
+		else
+			sd = script->id2sd(st, script_getnum(st, 3));
+	}
+	else
+		sd = script->rid2sd(st);
+
+	if (sd == NULL)
+		return true; // no player attached, report source
+
+	script_pushint(st, !pc->set_group(sd, new_group));
 
 	return true;
 }
@@ -11827,7 +11851,7 @@ BUILDIN(setmapflag) {
 			case MF_RESET:              map->list[m].flag.reset = 1; break;
 			case MF_NOTOMB:             map->list[m].flag.notomb = 1; break;
 			case MF_NOCASHSHOP:         map->list[m].flag.nocashshop = 1; break;
-			case MF_NOVIEWID:           map->list[m].flag.noviewid = (val <= 0) ? 0 : val; break;
+			case MF_NOVIEWID:			map->list[m].flag.noviewid = (val <= 0) ? 0 : val; break;
 		}
 	}
 
@@ -12097,7 +12121,7 @@ int buildin_maprespawnguildid_sub_mob(struct block_list *bl,va_list ap)
 {
 	struct mob_data *md=(struct mob_data *)bl;
 
-	if(!md->guardian_data && md->class_ != MOBID_EMPERIUM)
+	if (md->guardian_data == NULL && md->class_ != MOBID_EMPELIUM)
 		status_kill(bl);
 
 	return 0;
@@ -18921,8 +18945,6 @@ BUILDIN(montransform) {
 			return true;
 		}
 
-		sprintf(msg, msg_sd(sd,1485), monster->name); // Traaaansformation-!! %s form!!
-		clif->ShowScript(&sd->bl, msg);
 		status_change_end(bl, SC_MONSTER_TRANSFORM, INVALID_TIMER); // Clear previous
 		sc_start2(NULL, bl, SC_MONSTER_TRANSFORM, 100, mob_id, type, tick);
 
@@ -20254,6 +20276,7 @@ void script_parse_builtin(void) {
 		BUILDIN_DEF(getgdskilllv,"iv"),
 		BUILDIN_DEF(basicskillcheck,""),
 		BUILDIN_DEF(getgmlevel,""),
+		BUILDIN_DEF(setgroupid, "i?"),
 		BUILDIN_DEF(getgroupid,""),
 		BUILDIN_DEF(end,""),
 		BUILDIN_DEF(checkoption,"i"),

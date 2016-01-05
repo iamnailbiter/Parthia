@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2012-2015  Hercules Dev Team
+ * Copyright (C) 2012-2016  Hercules Dev Team
  * Copyright (C)  Athena Dev Teams
  *
  * Hercules is free software: you can redistribute it and/or modify
@@ -73,23 +73,31 @@ struct view_data* homunculus_get_viewdata(int class_) {
 enum homun_type homunculus_class2type(int class_) {
 	switch(class_) {
 		// Normal Homunculus
-		case 6001: case 6005:
-		case 6002: case 6006:
-		case 6003: case 6007:
-		case 6004: case 6008:
+		case HOMID_LIF:
+		case HOMID_AMISTR:
+		case HOMID_FILIR:
+		case HOMID_VANILMIRTH:
+		case HOMID_LIF2:
+		case HOMID_AMISTR2:
+		case HOMID_FILIR2:
+		case HOMID_VANILMIRTH2:
 			return HT_REG;
 		// Evolved Homunculus
-		case 6009: case 6013:
-		case 6010: case 6014:
-		case 6011: case 6015:
-		case 6012: case 6016:
+		case HOMID_LIF_E:
+		case HOMID_AMISTR_E:
+		case HOMID_FILIR_E:
+		case HOMID_VANILMIRTH_E:
+		case HOMID_LIF2_E:
+		case HOMID_AMISTR2_E:
+		case HOMID_FILIR2_E:
+		case HOMID_VANILMIRTH2_E:
 			return HT_EVO;
 		// Homunculus S
-		case 6048:
-		case 6049:
-		case 6050:
-		case 6051:
-		case 6052:
+		case HOMID_EIRA:
+		case HOMID_BAYERI:
+		case HOMID_SERA:
+		case HOMID_DIETR:
+		case HOMID_ELEANOR:
 			return HT_S;
 		default:
 			return HT_INVALID;
@@ -219,7 +227,7 @@ int homunculus_calc_skilltree(struct homun_data *hd, int flag_evolve) {
 			if( hd->homunculus.hskill[ id - HM_SKILLBASE ].id )
 				continue; //Skill already known.
 			if(!battle_config.skillfree) {
-				for( j = 0; j < MAX_PC_SKILL_REQUIRE; j++ ) {
+				for (j = 0; j < MAX_HOM_SKILL_REQUIRE; j++) {
 					if( homun->dbs->skill_tree[c][i].need[j].id &&
 					   homun->checkskill(hd,homun->dbs->skill_tree[c][i].need[j].id) < homun->dbs->skill_tree[c][i].need[j].lv ) {
 						f = 0;
@@ -244,7 +252,7 @@ int homunculus_calc_skilltree(struct homun_data *hd, int flag_evolve) {
 		if( j < homun->dbs->skill_tree[c][i].intimacylv )
 			continue;
 		if(!battle_config.skillfree) {
-			for( j = 0; j < MAX_PC_SKILL_REQUIRE; j++ ) {
+			for (j = 0; j < MAX_HOM_SKILL_REQUIRE; j++) {
 				if( homun->dbs->skill_tree[c][i].need[j].id &&
 					homun->checkskill(hd,homun->dbs->skill_tree[c][i].need[j].id) < homun->dbs->skill_tree[c][i].need[j].lv ) {
 					f = 0;
@@ -1226,7 +1234,7 @@ bool homunculus_read_skill_db_sub(char* split[], int columns, int current) {
 	if (minJobLevelPresent)
 		homun->dbs->skill_tree[classid][j].joblv = atoi(split[3]);
 
-	for( k = 0; k < MAX_PC_SKILL_REQUIRE; k++ ) {
+	for (k = 0; k < MAX_HOM_SKILL_REQUIRE; k++) {
 		homun->dbs->skill_tree[classid][j].need[k].id = atoi(split[3+k*2+minJobLevelPresent]);
 		homun->dbs->skill_tree[classid][j].need[k].lv = atoi(split[3+k*2+minJobLevelPresent+1]);
 	}

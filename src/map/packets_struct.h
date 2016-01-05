@@ -84,7 +84,7 @@ enum packet_headers {
 	idle_unitType = 0x2ee,
 #elif PACKETVER < 20101124
 	idle_unitType = 0x7f9,
-#elif PACKETVER < 20120221	
+#elif PACKETVER < 20120221
 	idle_unitType = 0x857,
 #elif PACKETVER < 20131223
 	idle_unitType = 0x915,
@@ -123,7 +123,7 @@ enum packet_headers {
 	spawn_unitType = 0x2ed,
 #elif PACKETVER < 20101124
 	spawn_unitType = 0x7f8,
-#elif PACKETVER < 20120221	
+#elif PACKETVER < 20120221
 	spawn_unitType = 0x858,
 #elif PACKETVER < 20131223
 	spawn_unitType = 0x90f,
