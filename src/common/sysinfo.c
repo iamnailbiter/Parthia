@@ -38,6 +38,7 @@
 #ifdef WIN32
 #	include <windows.h>
 #else
+#	include <sys/time.h> // time constants
 #	include <unistd.h>
 #endif
 
@@ -65,7 +66,7 @@ struct sysinfo_interface *sysinfo;
 #define VCSTYPE_UNKNOWN 0
 #define VCSTYPE_GIT 1
 #define VCSTYPE_SVN 2
-#define VCSTYPE_NONE -1
+#define VCSTYPE_NONE (-1)
 
 #ifdef WIN32
 /**
@@ -286,40 +287,6 @@ bool sysinfo_svn_get_revision(char **out) {
 			break;
 		}
 		aFree(buffer);
-
-		if (*out != NULL)
-			return true;
-	}
-
-	// subversion 1.6 and older?
-	if ((fp = fopen(".svn/entries", "r")) != NULL) {
-		char line[1024];
-		int rev;
-		// Check the version
-		if (fgets(line, sizeof(line), fp)) {
-			if (!ISDIGIT(line[0])) {
-				// XML File format
-				while (fgets(line,sizeof(line),fp))
-					if (strstr(line,"revision=")) break;
-				if (sscanf(line," %*[^\"]\"%d%*[^\n]", &rev) == 1) {
-					if (*out != NULL)
-						aFree(*out);
-					*out = aCalloc(1, 8);
-					snprintf(*out, 8, "%d", rev);
-				}
-			} else {
-				// Bin File format
-				if (fgets(line, sizeof(line), fp) == NULL) { printf("Can't get bin name\n"); } // Get the name
-				if (fgets(line, sizeof(line), fp) == NULL) { printf("Can't get entries kind\n"); } // Get the entries kind
-				if (fgets(line, sizeof(line), fp)) { // Get the rev numver
-					if (*out != NULL)
-						aFree(*out);
-					*out = aCalloc(1, 8);
-					snprintf(*out, 8, "%d", atoi(line));
-				}
-			}
-		}
-		fclose(fp);
 
 		if (*out != NULL)
 			return true;
@@ -1052,6 +1019,19 @@ void sysinfo_final(void) {
 	sysinfo->p->vcstype_name = NULL;
 }
 
+static const char *sysinfo_time(void)
+{
+#if defined(WIN32)
+	return "ticks count";
+#elif defined(ENABLE_RDTSC)
+	return "rdtsc";
+#elif defined(HAVE_MONOTONIC_CLOCK)
+	return "monotonic clock";
+#else
+	return "time of day";
+#endif
+}
+
 /**
  * Interface default values initialization.
  */
@@ -1072,6 +1052,7 @@ void sysinfo_defaults(void) {
 	sysinfo->is64bit = sysinfo_is64bit;
 	sysinfo->compiler = sysinfo_compiler;
 	sysinfo->cflags = sysinfo_cflags;
+	sysinfo->time = sysinfo_time;
 	sysinfo->vcstype = sysinfo_vcstype;
 	sysinfo->vcstypeid = sysinfo_vcstypeid;
 	sysinfo->vcsrevision_src = sysinfo_vcsrevision_src;

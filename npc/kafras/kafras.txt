@@ -49,7 +49,7 @@ aldeba_in,96,181,4	script	Kafra Service	4_F_KAFRA5,{
 	mes "Headquarters. Did you";
 	mes "need something?";
 	next;
-	switch(select("Save:Use Storage:Rent a Pushcart:Cancel")) {
+	switch(select("Save", "Use Storage", "Rent a Pushcart", "Cancel")) {
 	case 1:
 		mes "[Kafra Leilah]";
 		mes "Your Respawn Point has";
@@ -323,6 +323,7 @@ prontera,150,193,3	script	Kafra Employee::kaf_prontera6	4_F_KAFRA1,{
         savepoint "prontera",156,195;
         callfunc "F_KafEnd",0,1,"in the city of Prontera";
 }
+
 //== Juno ==================================================
 yuno,152,187,4	script	Kafra Employee::kaf_yuno	4_F_KAFRA8,{
 	cutin "kafra_08",2;

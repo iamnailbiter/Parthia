@@ -1,5 +1,6 @@
 /**
  * This file is part of Hercules.
+ * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
  * Copyright (C) 2013-2016  Hercules Dev Team
  *
@@ -22,26 +23,28 @@
  *       as it will get overwritten.
  */
 
+/* GENERATED FILE DO NOT EDIT */
+
 struct HookingPointData HookingPoints[] = {
-/* HCache */
+/* HCache_interface */
 	{ HP_POP(HCache->init, HP_HCache_init) },
 	{ HP_POP(HCache->check, HP_HCache_check) },
 	{ HP_POP(HCache->open, HP_HCache_open) },
-/* cmdline */
+/* cmdline_interface */
 	{ HP_POP(cmdline->init, HP_cmdline_init) },
 	{ HP_POP(cmdline->final, HP_cmdline_final) },
 	{ HP_POP(cmdline->arg_add, HP_cmdline_arg_add) },
 	{ HP_POP(cmdline->exec, HP_cmdline_exec) },
 	{ HP_POP(cmdline->arg_next_value, HP_cmdline_arg_next_value) },
 	{ HP_POP(cmdline->arg_source, HP_cmdline_arg_source) },
-/* console */
+/* console_interface */
 	{ HP_POP(console->init, HP_console_init) },
 	{ HP_POP(console->final, HP_console_final) },
 	{ HP_POP(console->display_title, HP_console_display_title) },
 	{ HP_POP(console->display_gplnotice, HP_console_display_gplnotice) },
-/* core */
+/* core_interface */
 	{ HP_POP(core->shutdown_callback, HP_core_shutdown_callback) },
-/* DB */
+/* db_interface */
 	{ HP_POP(DB->fix_options, HP_DB_fix_options) },
 	{ HP_POP(DB->default_cmp, HP_DB_default_cmp) },
 	{ HP_POP(DB->default_hash, HP_DB_default_hash) },
@@ -61,11 +64,39 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(DB->data2ptr, HP_DB_data2ptr) },
 	{ HP_POP(DB->init, HP_DB_init) },
 	{ HP_POP(DB->final, HP_DB_final) },
-/* libconfig */
+/* des_interface */
+	{ HP_POP(des->decrypt_block, HP_des_decrypt_block) },
+	{ HP_POP(des->decrypt, HP_des_decrypt) },
+/* lclif_interface */
+	{ HP_POP(lclif->init, HP_lclif_init) },
+	{ HP_POP(lclif->final, HP_lclif_final) },
+	{ HP_POP(lclif->connection_error, HP_lclif_connection_error) },
+	{ HP_POP(lclif->server_list, HP_lclif_server_list) },
+	{ HP_POP(lclif->auth_failed, HP_lclif_auth_failed) },
+	{ HP_POP(lclif->login_error, HP_lclif_login_error) },
+	{ HP_POP(lclif->coding_key, HP_lclif_coding_key) },
+	{ HP_POP(lclif->packet, HP_lclif_packet) },
+	{ HP_POP(lclif->parse_packet, HP_lclif_parse_packet) },
+	{ HP_POP(lclif->parse, HP_lclif_parse) },
+/* lclif_interface_private */
+	{ HP_POP(lclif->p->packetdb_loaddb, HP_PRIV__lclif_packetdb_loaddb) },
+	{ HP_POP(lclif->p->parse_sub, HP_PRIV__lclif_parse_sub) },
+	{ HP_POP(lclif->p->parse_CA_CONNECT_INFO_CHANGED, HP_PRIV__lclif_parse_CA_CONNECT_INFO_CHANGED) },
+	{ HP_POP(lclif->p->parse_CA_EXE_HASHCHECK, HP_PRIV__lclif_parse_CA_EXE_HASHCHECK) },
+	{ HP_POP(lclif->p->parse_CA_LOGIN, HP_PRIV__lclif_parse_CA_LOGIN) },
+	{ HP_POP(lclif->p->parse_CA_LOGIN2, HP_PRIV__lclif_parse_CA_LOGIN2) },
+	{ HP_POP(lclif->p->parse_CA_LOGIN3, HP_PRIV__lclif_parse_CA_LOGIN3) },
+	{ HP_POP(lclif->p->parse_CA_LOGIN4, HP_PRIV__lclif_parse_CA_LOGIN4) },
+	{ HP_POP(lclif->p->parse_CA_LOGIN_PCBANG, HP_PRIV__lclif_parse_CA_LOGIN_PCBANG) },
+	{ HP_POP(lclif->p->parse_CA_LOGIN_HAN, HP_PRIV__lclif_parse_CA_LOGIN_HAN) },
+	{ HP_POP(lclif->p->parse_CA_SSO_LOGIN_REQ, HP_PRIV__lclif_parse_CA_SSO_LOGIN_REQ) },
+	{ HP_POP(lclif->p->parse_CA_REQ_HASH, HP_PRIV__lclif_parse_CA_REQ_HASH) },
+	{ HP_POP(lclif->p->parse_CA_CHARSERVERCONNECT, HP_PRIV__lclif_parse_CA_CHARSERVERCONNECT) },
+/* libconfig_interface */
 	{ HP_POP(libconfig->read, HP_libconfig_read) },
 	{ HP_POP(libconfig->write, HP_libconfig_write) },
-	{ HP_POP(libconfig->set_auto_convert, HP_libconfig_set_auto_convert) },
-	{ HP_POP(libconfig->get_auto_convert, HP_libconfig_get_auto_convert) },
+	{ HP_POP(libconfig->set_options, HP_libconfig_set_options) },
+	{ HP_POP(libconfig->get_options, HP_libconfig_get_options) },
 	{ HP_POP(libconfig->read_string, HP_libconfig_read_string) },
 	{ HP_POP(libconfig->read_file_src, HP_libconfig_read_file_src) },
 	{ HP_POP(libconfig->write_file, HP_libconfig_write_file) },
@@ -78,6 +109,7 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(libconfig->setting_get_float, HP_libconfig_setting_get_float) },
 	{ HP_POP(libconfig->setting_get_bool, HP_libconfig_setting_get_bool) },
 	{ HP_POP(libconfig->setting_get_string, HP_libconfig_setting_get_string) },
+	{ HP_POP(libconfig->setting_lookup, HP_libconfig_setting_lookup) },
 	{ HP_POP(libconfig->setting_lookup_int, HP_libconfig_setting_lookup_int) },
 	{ HP_POP(libconfig->setting_lookup_int64, HP_libconfig_setting_lookup_int64) },
 	{ HP_POP(libconfig->setting_lookup_float, HP_libconfig_setting_lookup_float) },
@@ -109,18 +141,27 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(libconfig->setting_remove_elem, HP_libconfig_setting_remove_elem) },
 	{ HP_POP(libconfig->setting_set_hook, HP_libconfig_setting_set_hook) },
 	{ HP_POP(libconfig->lookup, HP_libconfig_lookup) },
-	{ HP_POP(libconfig->lookup_from, HP_libconfig_lookup_from) },
 	{ HP_POP(libconfig->lookup_int, HP_libconfig_lookup_int) },
 	{ HP_POP(libconfig->lookup_int64, HP_libconfig_lookup_int64) },
 	{ HP_POP(libconfig->lookup_float, HP_libconfig_lookup_float) },
 	{ HP_POP(libconfig->lookup_bool, HP_libconfig_lookup_bool) },
 	{ HP_POP(libconfig->lookup_string, HP_libconfig_lookup_string) },
-	{ HP_POP(libconfig->read_file, HP_libconfig_read_file) },
+	{ HP_POP(libconfig->load_file, HP_libconfig_load_file) },
 	{ HP_POP(libconfig->setting_copy_simple, HP_libconfig_setting_copy_simple) },
 	{ HP_POP(libconfig->setting_copy_elem, HP_libconfig_setting_copy_elem) },
 	{ HP_POP(libconfig->setting_copy_aggregate, HP_libconfig_setting_copy_aggregate) },
 	{ HP_POP(libconfig->setting_copy, HP_libconfig_setting_copy) },
-/* login */
+	{ HP_POP(libconfig->setting_get_bool_real, HP_libconfig_setting_get_bool_real) },
+	{ HP_POP(libconfig->setting_get_uint32, HP_libconfig_setting_get_uint32) },
+	{ HP_POP(libconfig->setting_get_uint16, HP_libconfig_setting_get_uint16) },
+	{ HP_POP(libconfig->setting_get_int16, HP_libconfig_setting_get_int16) },
+	{ HP_POP(libconfig->setting_lookup_bool_real, HP_libconfig_setting_lookup_bool_real) },
+	{ HP_POP(libconfig->setting_lookup_uint32, HP_libconfig_setting_lookup_uint32) },
+	{ HP_POP(libconfig->setting_lookup_uint16, HP_libconfig_setting_lookup_uint16) },
+	{ HP_POP(libconfig->setting_lookup_int16, HP_libconfig_setting_lookup_int16) },
+	{ HP_POP(libconfig->setting_lookup_mutable_string, HP_libconfig_setting_lookup_mutable_string) },
+	{ HP_POP(libconfig->lookup_mutable_string, HP_libconfig_lookup_mutable_string) },
+/* login_interface */
 	{ HP_POP(login->mmo_auth, HP_login_mmo_auth) },
 	{ HP_POP(login->mmo_auth_new, HP_login_mmo_auth_new) },
 	{ HP_POP(login->waiting_disconnect_timer, HP_login_waiting_disconnect_timer) },
@@ -162,20 +203,15 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(login->fromchar_parse_wrong_pincode, HP_login_fromchar_parse_wrong_pincode) },
 	{ HP_POP(login->fromchar_parse_accinfo, HP_login_fromchar_parse_accinfo) },
 	{ HP_POP(login->parse_fromchar, HP_login_parse_fromchar) },
-	{ HP_POP(login->connection_problem, HP_login_connection_problem) },
 	{ HP_POP(login->kick, HP_login_kick) },
 	{ HP_POP(login->auth_ok, HP_login_auth_ok) },
 	{ HP_POP(login->auth_failed, HP_login_auth_failed) },
-	{ HP_POP(login->login_error, HP_login_login_error) },
-	{ HP_POP(login->parse_ping, HP_login_parse_ping) },
-	{ HP_POP(login->parse_client_md5, HP_login_parse_client_md5) },
-	{ HP_POP(login->parse_client_login, HP_login_parse_client_login) },
-	{ HP_POP(login->send_coding_key, HP_login_send_coding_key) },
-	{ HP_POP(login->parse_request_coding_key, HP_login_parse_request_coding_key) },
+	{ HP_POP(login->client_login, HP_login_client_login) },
 	{ HP_POP(login->char_server_connection_status, HP_login_char_server_connection_status) },
 	{ HP_POP(login->parse_request_connection, HP_login_parse_request_connection) },
-	{ HP_POP(login->parse_login, HP_login_parse_login) },
-/* iMalloc */
+	{ HP_POP(login->config_set_defaults, HP_login_config_set_defaults) },
+	{ HP_POP(login->config_read, HP_login_config_read) },
+/* malloc_interface */
 	{ HP_POP(iMalloc->init, HP_iMalloc_init) },
 	{ HP_POP(iMalloc->final, HP_iMalloc_final) },
 	{ HP_POP(iMalloc->malloc, HP_iMalloc_malloc) },
@@ -183,20 +219,45 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(iMalloc->realloc, HP_iMalloc_realloc) },
 	{ HP_POP(iMalloc->reallocz, HP_iMalloc_reallocz) },
 	{ HP_POP(iMalloc->astrdup, HP_iMalloc_astrdup) },
+	{ HP_POP(iMalloc->astrndup, HP_iMalloc_astrndup) },
 	{ HP_POP(iMalloc->free, HP_iMalloc_free) },
 	{ HP_POP(iMalloc->memory_check, HP_iMalloc_memory_check) },
 	{ HP_POP(iMalloc->verify_ptr, HP_iMalloc_verify_ptr) },
 	{ HP_POP(iMalloc->usage, HP_iMalloc_usage) },
 	{ HP_POP(iMalloc->post_shutdown, HP_iMalloc_post_shutdown) },
 	{ HP_POP(iMalloc->init_messages, HP_iMalloc_init_messages) },
-/* nullpo */
+/* md5_interface */
+	{ HP_POP(md5->string, HP_md5_string) },
+	{ HP_POP(md5->binary, HP_md5_binary) },
+	{ HP_POP(md5->salt, HP_md5_salt) },
+/* mutex_interface */
+	{ HP_POP(mutex->create, HP_mutex_create) },
+	{ HP_POP(mutex->destroy, HP_mutex_destroy) },
+	{ HP_POP(mutex->lock, HP_mutex_lock) },
+	{ HP_POP(mutex->trylock, HP_mutex_trylock) },
+	{ HP_POP(mutex->unlock, HP_mutex_unlock) },
+	{ HP_POP(mutex->cond_create, HP_mutex_cond_create) },
+	{ HP_POP(mutex->cond_destroy, HP_mutex_cond_destroy) },
+	{ HP_POP(mutex->cond_wait, HP_mutex_cond_wait) },
+	{ HP_POP(mutex->cond_signal, HP_mutex_cond_signal) },
+	{ HP_POP(mutex->cond_broadcast, HP_mutex_cond_broadcast) },
+/* nullpo_interface */
 	{ HP_POP(nullpo->assert_report, HP_nullpo_assert_report) },
-/* showmsg */
+/* rnd_interface */
+	{ HP_POP(rnd->init, HP_rnd_init) },
+	{ HP_POP(rnd->final, HP_rnd_final) },
+	{ HP_POP(rnd->seed, HP_rnd_seed) },
+	{ HP_POP(rnd->random, HP_rnd_random) },
+	{ HP_POP(rnd->roll, HP_rnd_roll) },
+	{ HP_POP(rnd->value, HP_rnd_value) },
+	{ HP_POP(rnd->uniform, HP_rnd_uniform) },
+	{ HP_POP(rnd->uniform53, HP_rnd_uniform53) },
+/* showmsg_interface */
 	{ HP_POP(showmsg->init, HP_showmsg_init) },
 	{ HP_POP(showmsg->final, HP_showmsg_final) },
 	{ HP_POP(showmsg->clearScreen, HP_showmsg_clearScreen) },
 	{ HP_POP(showmsg->showMessageV, HP_showmsg_showMessageV) },
-/* sockt */
+/* socket_interface */
 	{ HP_POP(sockt->init, HP_sockt_init) },
 	{ HP_POP(sockt->final, HP_sockt_final) },
 	{ HP_POP(sockt->perform, HP_sockt_perform) },
@@ -225,7 +286,7 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(sockt->trusted_ip_check, HP_sockt_trusted_ip_check) },
 	{ HP_POP(sockt->net_config_read_sub, HP_sockt_net_config_read_sub) },
 	{ HP_POP(sockt->net_config_read, HP_sockt_net_config_read) },
-/* SQL */
+/* sql_interface */
 	{ HP_POP(SQL->Connect, HP_SQL_Connect) },
 	{ HP_POP(SQL->GetTimeout, HP_SQL_GetTimeout) },
 	{ HP_POP(SQL->GetColumnNames, HP_SQL_GetColumnNames) },
@@ -258,7 +319,7 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(SQL->StmtFreeResult, HP_SQL_StmtFreeResult) },
 	{ HP_POP(SQL->StmtFree, HP_SQL_StmtFree) },
 	{ HP_POP(SQL->StmtShowDebug_, HP_SQL_StmtShowDebug_) },
-/* StrBuf */
+/* stringbuf_interface */
 	{ HP_POP(StrBuf->Malloc, HP_StrBuf_Malloc) },
 	{ HP_POP(StrBuf->Init, HP_StrBuf_Init) },
 	{ HP_POP(StrBuf->Vprintf, HP_StrBuf_Vprintf) },
@@ -269,7 +330,7 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(StrBuf->Clear, HP_StrBuf_Clear) },
 	{ HP_POP(StrBuf->Destroy, HP_StrBuf_Destroy) },
 	{ HP_POP(StrBuf->Free, HP_StrBuf_Free) },
-/* strlib */
+/* strlib_interface */
 	{ HP_POP(strlib->jstrescape, HP_strlib_jstrescape) },
 	{ HP_POP(strlib->jstrescapecpy, HP_strlib_jstrescapecpy) },
 	{ HP_POP(strlib->jmemescapecpy, HP_strlib_jmemescapecpy) },
@@ -285,7 +346,7 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(strlib->safestrnlen_, HP_strlib_safestrnlen_) },
 	{ HP_POP(strlib->strline_, HP_strlib_strline_) },
 	{ HP_POP(strlib->bin2hex_, HP_strlib_bin2hex_) },
-/* sv */
+/* sv_interface */
 	{ HP_POP(sv->parse_next, HP_sv_parse_next) },
 	{ HP_POP(sv->parse, HP_sv_parse) },
 	{ HP_POP(sv->split, HP_sv_split) },
@@ -293,7 +354,7 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(sv->unescape_c, HP_sv_unescape_c) },
 	{ HP_POP(sv->skip_escaped_c, HP_sv_skip_escaped_c) },
 	{ HP_POP(sv->readdb, HP_sv_readdb) },
-/* sysinfo */
+/* sysinfo_interface */
 	{ HP_POP(sysinfo->getpagesize, HP_sysinfo_getpagesize) },
 	{ HP_POP(sysinfo->platform, HP_sysinfo_platform) },
 	{ HP_POP(sysinfo->osversion, HP_sysinfo_osversion) },
@@ -303,6 +364,7 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(sysinfo->is64bit, HP_sysinfo_is64bit) },
 	{ HP_POP(sysinfo->compiler, HP_sysinfo_compiler) },
 	{ HP_POP(sysinfo->cflags, HP_sysinfo_cflags) },
+	{ HP_POP(sysinfo->time, HP_sysinfo_time) },
 	{ HP_POP(sysinfo->vcstype, HP_sysinfo_vcstype) },
 	{ HP_POP(sysinfo->vcstypeid, HP_sysinfo_vcstypeid) },
 	{ HP_POP(sysinfo->vcsrevision_src, HP_sysinfo_vcsrevision_src) },
@@ -311,7 +373,19 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(sysinfo->is_superuser, HP_sysinfo_is_superuser) },
 	{ HP_POP(sysinfo->init, HP_sysinfo_init) },
 	{ HP_POP(sysinfo->final, HP_sysinfo_final) },
-/* timer */
+/* thread_interface */
+	{ HP_POP(thread->init, HP_thread_init) },
+	{ HP_POP(thread->final, HP_thread_final) },
+	{ HP_POP(thread->create, HP_thread_create) },
+	{ HP_POP(thread->create_opt, HP_thread_create_opt) },
+	{ HP_POP(thread->destroy, HP_thread_destroy) },
+	{ HP_POP(thread->self, HP_thread_self) },
+	{ HP_POP(thread->get_tid, HP_thread_get_tid) },
+	{ HP_POP(thread->wait, HP_thread_wait) },
+	{ HP_POP(thread->prio_set, HP_thread_prio_set) },
+	{ HP_POP(thread->prio_get, HP_thread_prio_get) },
+	{ HP_POP(thread->yield, HP_thread_yield) },
+/* timer_interface */
 	{ HP_POP(timer->gettick, HP_timer_gettick) },
 	{ HP_POP(timer->gettick_nocache, HP_timer_gettick_nocache) },
 	{ HP_POP(timer->add, HP_timer_add) },

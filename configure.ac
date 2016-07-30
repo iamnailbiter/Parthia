@@ -37,6 +37,51 @@ m4_ifdef([AC_USE_SYSTEM_EXTENSIONS],
 	[AC_GNU_SOURCE]
 )
 
+# Root-check
+host_is="`uname`"
+case $host_os in
+CYGWIN*)
+	;;
+*)
+	if type id >/dev/null 2>&1; then
+		euid="`id -u`"
+		if test "$euid" == "0"; then
+			echo ""
+			echo "********************************************************************************"
+			echo '*                            W A R N I N G      /!\                            *'
+			echo "********************************************************************************"
+			echo "* It appears that you're planning to run Hercules with root privileges. That's *"
+			echo "* not necessary, nor recommended, and it may open your machine to unnecessary  *"
+			echo "* security risks.  You should never ever run software as root unless it        *"
+			echo "* requires the extra privileges (which Hercules does not.)                     *"
+			echo "*                                                                              *"
+			echo "* More info:                                                                   *"
+			echo "* http://www.tldp.org/HOWTO/Security-HOWTO/local-security.html                 *"
+			echo "* https://wiki.debian.org/sudo                                                 *"
+			echo "* http://wiki.centos.org/TipsAndTricks/BecomingRoot                            *"
+			echo "* http://fedoraproject.org/wiki/Configuring_Sudo                               *"
+			echo "* https://help.ubuntu.com/community/RootSudo                                   *"
+			echo "* http://www.freebsdwiki.net/index.php/Root                                    *"
+			echo "*                                                                              *"
+			echo "* If your service provider forces (or encourages) you to run server software   *"
+			echo "* as root, please complain to them. It is a very bad idea.                     *"
+			echo "********************************************************************************"
+			echo "Execution will be paused for 60 seconds... Press Ctrl-C now if you wish to stop."
+			for j in 1 2 3 4 5 6; do
+				for i in 1 2 3 4 5 6 7 8 9 10; do
+					printf "\a. "
+					sleep 1
+				done
+				echo ""
+			done
+			echo ""
+			echo "Resuming as root. If anything breaks, you'll get to keep the pieces."
+			sleep 2
+		fi
+	fi
+	;;
+esac
+
 #
 # Memory managers
 #
@@ -95,6 +140,36 @@ AC_ARG_ENABLE(
 	],
 	[enable_packetver_re="no"]
 )
+
+
+#
+# Epoll
+#
+AC_ARG_ENABLE([epoll],
+	[AS_HELP_STRING([--enable-epoll],[use epoll(4) on Linux])],
+	[enable_epoll=$enableval],
+	[enable_epoll=no]
+)
+if test x$enable_epoll = xno; then
+	have_linux_epoll=no
+else
+	AC_MSG_CHECKING([for Linux epoll(4)])
+	AC_LINK_IFELSE([AC_LANG_PROGRAM(
+		[
+		#ifndef __linux__
+		#error This is not Linux
+		#endif
+		#include <sys/epoll.h>
+		],
+		[epoll_create1 (EPOLL_CLOEXEC);])],
+		[have_linux_epoll=yes],
+		[have_linux_epoll=no]
+	)
+	AC_MSG_RESULT([$have_linux_epoll])
+fi
+if test x$enable_epoll,$have_linux_epoll = xyes,no; then
+    AC_MSG_ERROR([epoll support explicitly enabled but not available])
+fi
 
 
 #
@@ -158,7 +233,7 @@ AC_ARG_ENABLE(
 	AC_HELP_STRING(
 		[--enable-debug@<:@=ARG@:>@],
 		[
-			Compiles extra debug code. (disabled by default)
+			Compiles extra debug code. (yes by default)
 			(available options: yes, no, gdb)
 		]
 	),
@@ -171,7 +246,7 @@ AC_ARG_ENABLE(
 			*) AC_MSG_ERROR([[invalid argument --enable-debug=$enableval... stopping]]);;
 		esac
 	],
-	[enable_debug="no"]
+	[enable_debug="yes"]
 )
 
 #
@@ -283,7 +358,7 @@ AC_ARG_ENABLE(
 		case $enableval in
 			"no");;
 			"yes");;
-			*) AC_MSG_ERROR([[invalid argument --enable-lto=$disableval... stopping]]);;
+			*) AC_MSG_ERROR([[invalid argument --enable-lto=$enableval... stopping]]);;
 		esac
 	],
 	[enable_lto="no"]
@@ -306,7 +381,7 @@ AC_ARG_ENABLE(
 		case $enableval in
 			"no");;
 			"yes");;
-			*) AC_MSG_ERROR([[invalid argument --enable-static=$disableval... stopping]]);;
+			*) AC_MSG_ERROR([[invalid argument --enable-static=$enableval... stopping]]);;
 		esac
 	],
 	[enable_static="no"]
@@ -331,10 +406,36 @@ AC_ARG_ENABLE(
 			"no");;
 			"yes");;
 			"full");;
-			*) AC_MSG_ERROR([[invalid argument --enable-sanitize=$disableval... stopping]]);;
+			*) AC_MSG_ERROR([[invalid argument --enable-sanitize=$enableval... stopping]]);;
 		esac
 	],
 	[enable_sanitize="no"]
+)
+
+
+#
+# -Werror compiler flag
+# It's not always possible (if at all) to pass -Werror in the CFLAGS, since
+# autoconf often generates test-code that produces warnings.
+# Reference: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=734104
+#
+AC_ARG_ENABLE(
+	[Werror],
+	AC_HELP_STRING(
+		[--enable-Werror],
+		[
+			Enables -Werror in the compiler flags. (disabled by default)
+		]
+	),
+	[
+		enable_Werror="$enableval"
+		case $enableval in
+			"no");;
+			"yes");;
+			*) AC_MSG_ERROR([[invalid argument --enable-Werror=$enableval... stopping]]);;
+		esac
+	],
+	[enable_Werror="no"]
 )
 
 
@@ -443,54 +544,6 @@ AC_ARG_WITH(
 )
 
 
-#
-# Enable/disable PCRE and optionally specify the path (optional library)
-#
-AC_ARG_WITH(
-	[pcre],
-	AC_HELP_STRING(
-		[--with-pcre@<:@=ARG@:>@],
-		[use PCRE library, optionally specify the full path of pcre installation directory (by default pcre is used if found)]
-	),
-	[
-		if test "$withval" = "no" ; then
-			want_pcre="no"
-		else
-			want_pcre="yes"
-			require_pcre="yes"
-			if test "$withval" != "yes" ; then
-				if test ! -d "$withval" ; then
-					AC_MSG_ERROR([$withval is not a directoy])
-				fi
-				PCRE_HOME="$withval"
-			fi
-		fi
-	],
-	[want_pcre="yes" require_pcre="no"]
-)
-
-
-#
-# Specify the path of the zlib library (required library)
-#
-AC_ARG_WITH(
-	[zlib],
-	AC_HELP_STRING(
-		[--with-zlib=DIR],
-		[root directory path of zlib installation (defaults to /usr/local or /usr if not found in /usr/local).
-		 Assumes that the header files are in DIR/include and the library files are in DIR/lib]
-	),
-	[
-		test -n "$withval" && ZLIB_HOME="$withval"
-	],
-	[
-		ZLIB_HOME=/usr/local
-		test ! -f "${ZLIB_HOME}/include/zlib.h" && ZLIB_HOME=/usr
-	]
-)
-
-
-
 ###############################################################################
 # Check for programs and types.
 #
@@ -504,9 +557,40 @@ AC_PATH_PROG(AR, ar)
 AC_LANG([C])
 
 
-CFLAGS="$CFLAGS -pipe -ffast-math -fvisibility=hidden -Wall -Wextra -Wno-sign-compare"
+# -Wcast-qual  use for check wrong casts. It cant be added by default, because some casts must be wrong.
+# -Wconversion warning: conversion to 'long unsigned int' from 'int' may change the sign of the result
+# -Wfloat-equal comparing floating point with == or != is unsafe
+# -Wunsuffixed-float-constants float issues
+# -Wpedantic different pedantic checks. Not all can be fixed in nice way.
+# -Wtraditional-conversion some conversion issues
+# -Wunsafe-loop-optimizations possible optimisation issues
+# -Wunused-parameter -Wunused-but-set-parameter unused parameters
+# -Wunused-macros unused macro warnings, but it also enable unused parameters
+# -Wstrict-prototypes show warning in grammar.y
+# -wdiscarded-qualifiers show different const removal
+# attributes suggestion
+#  -Wsuggest-attribute=const -Wsuggest-attribute=format -Wsuggest-attribute=pure
+
+# flags what can be used but now return no warnings:
+#   -Wchkp -Wdisabled-optimization
+#   -Werror-implicit-function-declaration -Wtrampolines
+#   -Wjump-misses-init
+
+CFLAGS="$CFLAGS -pipe -ffast-math -Wall -Wextra -Wno-sign-compare -std=c99"
 CPPFLAGS="$CPPFLAGS -I../common"
 LDFLAGS="$LDFLAGS"
+
+# Add /usr/local to the library and header search path, where appropriate
+case `uname` in
+	Darwin*|*BSD*)
+		if test -d /usr/local/include ; then
+			CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+		fi
+		if test -d /usr/local/lib ; then
+			LDFLAGS="$LDFLAGS -L/usr/local/lib"
+		fi
+	;;
+esac
 
 AC_C_BIGENDIAN(
 	[AC_MSG_ERROR([[bigendian is not supported... stopping]])],
@@ -667,7 +751,7 @@ if test "$enable_lto" != "no" ; then
 	)
 fi
 
-AC_DEFUN(AC_CHECK_SANITIZER_FLAG,
+AC_DEFUN([AC_CHECK_SANITIZER_FLAG],
 	[
 		AC_MSG_CHECKING([whether $CC supports -fsanitize=$1])
 		OLD_CFLAGS="$CFLAGS"
@@ -705,6 +789,32 @@ AC_DEFUN(AC_CHECK_SANITIZER_FLAG,
 	]
 )
 
+AC_DEFUN([AC_CHECK_FLAG],
+	[
+		AC_MSG_CHECKING([whether $CC supports $1])
+		OLD_CFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS $1"
+		OLD_LDFLAGS="$LDFLAGS"
+		LDFLAGS="$LDFLAGS $1"
+		AC_COMPILE_IFELSE(
+			[AC_LANG_SOURCE([int foo;])],
+			[
+				AC_MSG_RESULT([yes])
+			],
+			[
+				AC_MSG_RESULT([no])
+				CFLAGS="$OLD_CFLAGS"
+				LDFLAGS="$OLD_LDFLAGS"
+			],
+			[
+				AC_MSG_RESULT([guessing no])
+				CFLAGS="$OLD_CFLAGS"
+				LDFLAGS="$OLD_LDFLAGS"
+			]
+		)
+	]
+)
+
 #
 # sanitize Support test
 #
@@ -720,6 +830,7 @@ if test "$enable_sanitize" != "no" ; then
 		AC_CHECK_SANITIZER_FLAG(return)
 		AC_CHECK_SANITIZER_FLAG(signed-integer-overflow)
 		AC_CHECK_SANITIZER_FLAG(bounds)
+		AC_CHECK_SANITIZER_FLAG(bounds-strict)
 		AC_CHECK_SANITIZER_FLAG(object-size)
 		AC_CHECK_SANITIZER_FLAG(float-divide-by-zero)
 		AC_CHECK_SANITIZER_FLAG(float-cast-overflow)
@@ -732,7 +843,7 @@ if test "$enable_sanitize" != "no" ; then
 fi
 
 
-AC_DEFUN(AC_CHECK_COMPILER_WFLAG,
+AC_DEFUN([AC_CHECK_COMPILER_WFLAG],
 	[
 		AC_MSG_CHECKING([whether $CC supports -W$1])
 		OLD_CFLAGS="$CFLAGS"
@@ -767,7 +878,7 @@ AC_DEFUN(AC_CHECK_COMPILER_WFLAG,
 	]
 )
 
-AC_DEFUN(AC_CHECK_COMPILER_WNOFLAG,
+AC_DEFUN([AC_CHECK_COMPILER_WNOFLAG],
 	[
 		AC_MSG_CHECKING([whether $CC supports -Wno-$1])
 		OLD_CFLAGS="$CFLAGS"
@@ -830,14 +941,33 @@ AC_CHECK_COMPILER_WNOFLAG(clobbered)
 AC_CHECK_COMPILER_WFLAG(empty-body)
 AC_CHECK_COMPILER_WFLAG(newline-eof)
 AC_CHECK_COMPILER_WFLAG(int-conversion)
+AC_CHECK_COMPILER_WFLAG(init-self)
+AC_CHECK_COMPILER_WFLAG(pointer-arith)
+AC_CHECK_COMPILER_WFLAG(switch-bool)
 AC_CHECK_COMPILER_WFLAG(enum-conversion)
 AC_CHECK_COMPILER_WFLAG(shorten-64-to-32)
 AC_CHECK_COMPILER_WFLAG(constant-conversion)
 AC_CHECK_COMPILER_WFLAG(bool-conversion)
 AC_CHECK_COMPILER_WFLAG(format-security)
+AC_CHECK_COMPILER_WFLAG(format)
+AC_CHECK_COMPILER_WFLAG(format-signedness)
+AC_CHECK_COMPILER_WFLAG(format-y2k)
+AC_CHECK_COMPILER_WFLAG(missing-include-dirs)
+AC_CHECK_COMPILER_WFLAG(suggest-attribute=noreturn)
+AC_CHECK_COMPILER_WFLAG(undef)
+#AC_CHECK_COMPILER_WFLAG(cast-align)
+#AC_CHECK_COMPILER_WFLAG(logical-op) # some useless warnings
+AC_CHECK_COMPILER_WFLAG(nested-externs)
+AC_CHECK_COMPILER_WFLAG(old-style-definition)
+AC_CHECK_COMPILER_WFLAG(overlength-strings)
+AC_CHECK_COMPILER_WFLAG(redundant-decls)
+AC_CHECK_COMPILER_WFLAG(cast-qual)
+AC_CHECK_COMPILER_WFLAG(misleading-indentation)
+AC_CHECK_COMPILER_WFLAG(null-dereference)
 AC_CHECK_COMPILER_WNOFLAG(format-nonliteral)
 AC_CHECK_COMPILER_WNOFLAG(switch)
 AC_CHECK_COMPILER_WNOFLAG(missing-field-initializers)
+AC_CHECK_COMPILER_WNOFLAG(suggest-attribute=format)
 
 # Certain versions of gcc make -Wshadow completely useless by making it flood
 # you with unnecessary warnings <https://lkml.org/lkml/2006/11/28/239>
@@ -1065,6 +1195,18 @@ case $enable_packetver_re in
 esac
 
 #
+# Epoll
+#
+case $have_linux_epoll in
+	"yes")
+		CPPFLAGS="$CPPFLAGS -DSOCKET_EPOLL"
+		;;
+	"no")
+		# default value
+		;;
+esac
+
+#
 # Obfuscation keys
 #
 if test -n "$obfuscationkey1" -a -n "$obfuscationkey2" -a -n "$obfuscationkey3"; then
@@ -1082,10 +1224,12 @@ case $enable_debug in
 	"yes")
 		CFLAGS="$CFLAGS -g"
 		CPPFLAGS="$CPPFLAGS -DDEBUG"
+		AC_CHECK_FLAG(-fno-omit-frame-pointer)
 		;;
 	"gdb")
 		CFLAGS="$CFLAGS -ggdb"
 		CPPFLAGS="$CPPFLAGS -DDEBUG"
+		AC_CHECK_FLAG(-fno-omit-frame-pointer)
 		;;
 esac
 
@@ -1188,12 +1332,8 @@ fi
 #
 # zlib library (required)
 #
-if test -n "${ZLIB_HOME}" ; then
-	LDFLAGS="$LDFLAGS -L${ZLIB_HOME}/lib"
-	CPPFLAGS="$CPPFLAGS -I${ZLIB_HOME}/include"
-fi
-AC_SEARCH_LIBS([inflateEnd], [z], [],[AC_MSG_ERROR([zlib library not found or incompatible, please specify the correct path with --with-zlib=DIR... stopping])])
-AC_CHECK_HEADER([zlib.h], [], [AC_MSG_ERROR([zlib header not found, please specify the correct path with --with-zlib=DIR... stopping])])
+AC_SEARCH_LIBS([inflateEnd], [z], [],[AC_MSG_ERROR([zlib library not found or incompatible... stopping])])
+AC_CHECK_HEADER([zlib.h], [], [AC_MSG_ERROR([zlib header not found, please specify the correct path with... stopping])])
 
 
 #
@@ -1317,47 +1457,10 @@ AC_SUBST([MYSQL_LIBS])
 #
 # PCRE library (optional)
 #
-##TODO PCRE version
-PCRE_LIBS=""
-PCRE_CFLAGS=""
 
-if test "$want_pcre" = "no" ; then
-	AC_MSG_NOTICE([ignoring PCRE (optional)])
-else
-	if test -z "$PCRE_HOME" ; then
-		AC_CHECK_LIB([pcre], [pcre_study], [HAVE_PCRE="yes"], [])
-		if test "$HAVE_PCRE" = "yes" ; then
-			PCRE_LIBS="-lpcre"
-			PCRE_CFLAGS="-DPCRE_SUPPORT"
-		fi
-	else
-		PCRE_OLD_LDFLAGS="$LDFLAGS" ; LDFLAGS="$LDFLAGS -L$PCRE_HOME/lib"
-		PCRE_OLD_CPPFLAGS="$CPPFLAGS" ; CPPFLAGS="$CPPFLAGS -I$PCRE_HOME/include"
-		AC_CHECK_LIB(pcre, pcre_compile, [HAVE_PCRE="yes"], [])
-		CPPFLAGS="$PCRE_OLD_CPPFLAGS"
-		LDFLAGS="$PCRE_OLD_LDFLAGS"
-		if test "$HAVE_PCRE" = "yes" ; then
-			PCRE_LIBS="-L$PCRE_HOME/lib -lpcre"
-			test -d "$PCRE_HOME/include" && PCRE_CFLAGS="-I$PCRE_HOME/include -DPCRE_SUPPORT"
-		fi
-	fi
-	AC_MSG_CHECKING([PCRE library (optional)])
-	if test "$HAVE_PCRE" = "yes" ; then
-		AC_MSG_RESULT([yes])
-	else
-		AC_MSG_RESULT([no])
-		if test "$require_pcre" = "yes" ; then
-			AC_MSG_ERROR([PCRE not found or incompatible (requested)])
-		else
-			AC_MSG_NOTICE([disabling PCRE (optional)])
-		fi
-	fi
-fi
-
-AC_SUBST([HAVE_PCRE])
-AC_SUBST([PCRE_LIBS])
-AC_SUBST([PCRE_CFLAGS])
-
+AC_MSG_CHECKING([PCRE library])
+AC_CHECK_HEADER([pcre.h], [], [AC_MSG_ERROR([PCRE header not found])])
+AC_SEARCH_LIBS([pcre_study], [pcre], [], AC_MSG_ERROR([PCRE not found or incompatible]))
 
 #
 # static Support test
@@ -1371,9 +1474,9 @@ if test "$enable_static" != "no" ; then
 	OLD_LDFLAGS="$LDFLAGS"
 	OLD_LIBS="$LIBS"
 
-	CFLAGS="$OLD_CFLAGS $MYSQL_CFLAGS $PCRE_CFLAGS -static"
+	CFLAGS="$OLD_CFLAGS $MYSQL_CFLAGS -static"
 	LDFLAGS="$OLD_LDFLAGS -static"
-	LIBS="$OLD_LIBS $MYSQL_LIBS $PCRE_LIBS"
+	LIBS="$OLD_LIBS $MYSQL_LIBS"
 
 	AC_MSG_CHECKING([whether $CC supports -static])
 	AC_RUN_IFELSE(
@@ -1420,6 +1523,35 @@ if test "$enable_static" != "no" ; then
 	CFLAGS="$OLD_CFLAGS"
 	LDFLAGS="$OLD_LDFLAGS"
 	LIBS="$OLD_LIBS"
+fi
+
+#
+# -Werror compiler flag
+#
+if test "$enable_Werror" != "no" ; then
+
+	OLD_CFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -Werror"
+
+	AC_MSG_CHECKING([whether $CC supports -Werror])
+	AC_RUN_IFELSE(
+		[AC_LANG_SOURCE([
+			int main(int argc, char **argv){
+				return 0;
+			}
+		])],
+		[
+			AC_MSG_RESULT([yes])
+		],
+		[
+			AC_MSG_RESULT([no])
+			CFLAGS="$OLD_CFLAGS"
+			LDFLAGS="$OLD_LDFLAGS"
+		],
+		[
+			AC_MSG_RESULT([guessing no])
+		]
+	)
 fi
 
 AC_SUBST(STATIC, ${STATIC})

@@ -106,7 +106,7 @@ int instance_create(int owner_id, const char *name, enum instance_owner_type typ
 			icptr = &g->instances;
 			break;
 		default:
-			ShowError("instance_create: unknown type %d for owner_id %d and name %s.\n", type,owner_id,name);
+			ShowError("instance_create: unknown type %u for owner_id %d and name %s.\n", type, owner_id, name);
 			return -1;
 	}
 
@@ -369,20 +369,30 @@ int instance_mapid2imapid(int16 m, int instance_id) {
 /*--------------------------------------
  * Used on Init instance. Duplicates each script on source map
  *--------------------------------------*/
-int instance_map_npcsub(struct block_list* bl, va_list args) {
-	struct npc_data* nd = (struct npc_data*)bl;
+int instance_map_npcsub(struct block_list* bl, va_list args)
+{
+	struct npc_data *nd = NULL;
 	int16 m = va_arg(args, int); // Destination Map
 
-	if ( npc->duplicate4instance(nd, m) )
+	nullpo_ret(bl);
+	Assert_ret(bl->type == BL_NPC);
+	nd = BL_UCAST(BL_NPC, bl);
+
+	if (npc->duplicate4instance(nd, m))
 		ShowDebug("instance_map_npcsub:npc_duplicate4instance failed (%s/%d)\n",nd->name,m);
 
 	return 1;
 }
 
-int instance_init_npc(struct block_list* bl, va_list args) {
-	struct npc_data *nd = (struct npc_data*)bl;
+int instance_init_npc(struct block_list* bl, va_list args)
+{
+	struct npc_data *nd = NULL;
 	struct event_data *ev;
 	char evname[EVENT_NAME_LENGTH];
+
+	nullpo_ret(bl);
+	Assert_ret(bl->type == BL_NPC);
+	nd = BL_UCAST(BL_NPC, bl);
 
 	snprintf(evname, EVENT_NAME_LENGTH, "%s::OnInstanceInit", nd->exname);
 
@@ -430,10 +440,10 @@ int instance_cleanup_sub(struct block_list *bl, va_list ap) {
 
 	switch(bl->type) {
 		case BL_PC:
-			map->quit((struct map_session_data *) bl);
+			map->quit(BL_UCAST(BL_PC, bl));
 			break;
 		case BL_NPC:
-			npc->unload((struct npc_data *)bl,true);
+			npc->unload(BL_UCAST(BL_NPC, bl), true);
 			break;
 		case BL_MOB:
 			unit->free(bl,CLR_OUTSIGHT);
@@ -445,7 +455,7 @@ int instance_cleanup_sub(struct block_list *bl, va_list ap) {
 			map->clearflooritem(bl);
 			break;
 		case BL_SKILL:
-			skill->delunit((struct skill_unit *) bl);
+			skill->delunit(BL_UCAST(BL_SKILL, bl));
 			break;
 	}
 
@@ -541,7 +551,7 @@ void instance_destroy(int instance_id) {
 	struct party_data *p = NULL;
 	struct guild *g = NULL;
 	short *iptr = NULL;
-	int type, j;
+	int type;
 	unsigned int now = (unsigned int)time(NULL);
 
 	if( !instance->valid(instance_id) )
@@ -581,14 +591,15 @@ void instance_destroy(int instance_id) {
 			icptr = &g->instances;
 			break;
 		default:
-			ShowError("instance_destroy: unknown type %d for owner_id %d and name '%s'.\n", instance->list[instance_id].owner_type,instance->list[instance_id].owner_id,instance->list[instance_id].name);
+			ShowError("instance_destroy: unknown type %u for owner_id %d and name '%s'.\n", instance->list[instance_id].owner_type, instance->list[instance_id].owner_id, instance->list[instance_id].name);
 			break;
 	}
 
 	if( iptr != NULL ) {
-		ARR_FIND(0, *icptr, j, iptr[j] == instance_id);
-		if( j != *icptr )
-			iptr[j] = -1;
+		int i;
+		ARR_FIND(0, *icptr, i, iptr[i] == instance_id);
+		if (i != *icptr)
+			iptr[i] = -1;
 	}
 
 	if (instance->list[instance_id].map) {
@@ -724,7 +735,7 @@ void do_reload_instance(void) {
 	}
 
 	iter = mapit_getallusers();
-	for( sd = (TBL_PC*)mapit->first(iter); mapit->exists(iter); sd = (TBL_PC*)mapit->next(iter) ) {
+	for (sd = BL_UCAST(BL_PC, mapit->first(iter)); mapit->exists(iter); sd = BL_UCAST(BL_PC, mapit->next(iter))) {
 		if(sd && map->list[sd->bl.m].instance_id >= 0) {
 			pc->setpos(sd,instance->list[map->list[sd->bl.m].instance_id].respawn.map,instance->list[map->list[sd->bl.m].instance_id].respawn.x,instance->list[map->list[sd->bl.m].instance_id].respawn.y,CLR_TELEPORT);
 		}

@@ -171,7 +171,7 @@ int bg_team_leave(struct map_session_data *sd, enum bg_team_leave_type flag) {
 				sprintf(output, "Server : %s has been afk-kicked from the battlefield...", sd->status.name);
 				break;
 		}
-		clif->bg_message(bgd, 0, "Server", output, strlen(output) + 1);
+		clif->bg_message(bgd, 0, "Server", output);
 	}
 
 	if( bgd->logout_event[0] && flag )
@@ -220,49 +220,68 @@ int bg_team_get_id(struct block_list *bl) {
 	nullpo_ret(bl);
 	switch( bl->type ) {
 		case BL_PC:
-			return ((TBL_PC*)bl)->bg_id;
+		{
+			const struct map_session_data *sd = BL_UCCAST(BL_PC, bl);
+			return sd->bg_id;
+		}
 		case BL_PET:
-			if( ((TBL_PET*)bl)->msd )
-				return ((TBL_PET*)bl)->msd->bg_id;
+		{
+			const struct pet_data *pd = BL_UCCAST(BL_PET, bl);
+			if (pd->msd != NULL)
+				return pd->msd->bg_id;
+		}
 			break;
 		case BL_MOB:
 		{
-			struct map_session_data *msd;
-			struct mob_data *md = (TBL_MOB*)bl;
+			const struct mob_data *md = BL_UCCAST(BL_MOB, bl);
+			const struct map_session_data *msd;
 			if (md->special_state.ai != AI_NONE && (msd = map->id2sd(md->master_id)) != NULL)
 				return msd->bg_id;
 			return md->bg_id;
 		}
 		case BL_HOM:
-			if( ((TBL_HOM*)bl)->master )
-				return ((TBL_HOM*)bl)->master->bg_id;
+		{
+			const struct homun_data *hd = BL_UCCAST(BL_HOM, bl);
+			if (hd->master != NULL)
+				return hd->master->bg_id;
+		}
 			break;
 		case BL_MER:
-			if( ((TBL_MER*)bl)->master )
-				return ((TBL_MER*)bl)->master->bg_id;
+		{
+			const struct mercenary_data *md = BL_UCCAST(BL_MER, bl);
+			if (md->master != NULL)
+				return md->master->bg_id;
+		}
 			break;
 		case BL_SKILL:
-			return ((TBL_SKILL*)bl)->group->bg_id;
+		{
+			const struct skill_unit *su = BL_UCCAST(BL_SKILL, bl);
+			if (su->group != NULL)
+				return su->group->bg_id;
+		}
+			break;
 	}
 
 	return 0;
 }
 
-bool bg_send_message(struct map_session_data *sd, const char *mes, int len) {
+bool bg_send_message(struct map_session_data *sd, const char *mes)
+{
 	struct battleground_data *bgd;
 
 	nullpo_ret(sd);
 	nullpo_ret(mes);
 	if( sd->bg_id == 0 || (bgd = bg->team_search(sd->bg_id)) == NULL )
 		return false; // Couldn't send message
-	clif->bg_message(bgd, sd->bl.id, sd->status.name, mes, len);
+	clif->bg_message(bgd, sd->bl.id, sd->status.name, mes);
 	return true;
 }
 
 /**
  * @see DBApply
  */
-int bg_send_xy_timer_sub(DBKey key, DBData *data, va_list ap) {
+int bg_send_xy_timer_sub(union DBKey key, struct DBData *data, va_list ap)
+{
 	struct battleground_data *bgd = DB->data2ptr(data);
 	struct map_session_data *sd;
 	int i;
@@ -313,18 +332,18 @@ enum bg_queue_types bg_str2teamtype (const char *str) {
 }
 
 void bg_config_read(void) {
-	config_t bg_conf;
-	config_setting_t *data = NULL;
+	struct config_t bg_conf;
+	struct config_setting_t *data = NULL;
 	const char *config_filename = "conf/battlegrounds.conf"; // FIXME hardcoded name
 
-	if (libconfig->read_file(&bg_conf, config_filename))
+	if (!libconfig->load_file(&bg_conf, config_filename))
 		return;
 
 	data = libconfig->lookup(&bg_conf, "battlegrounds");
 
 	if (data != NULL) {
-		config_setting_t *settings = libconfig->setting_get_elem(data, 0);
-		config_setting_t *arenas;
+		struct config_setting_t *settings = libconfig->setting_get_elem(data, 0);
+		struct config_setting_t *arenas;
 		const char *delay_var;
 		int offline = 0;
 
@@ -344,8 +363,8 @@ void bg_config_read(void) {
 			int arena_count = libconfig->setting_length(arenas);
 			CREATE( bg->arena, struct bg_arena *, arena_count );
 			for(i = 0; i < arena_count; i++) {
-				config_setting_t *arena = libconfig->setting_get_elem(arenas, i);
-				config_setting_t *reward;
+				struct config_setting_t *arena = libconfig->setting_get_elem(arenas, i);
+				struct config_setting_t *reward;
 				const char *aName, *aEvent, *aDelayVar, *aTeamTypes;
 				int minLevel = 0, maxLevel = 0;
 				int prizeWin, prizeLoss, prizeDraw;
@@ -478,7 +497,8 @@ void bg_config_read(void) {
 	}
 	libconfig->destroy(&bg_conf);
 }
-struct bg_arena *bg_name2arena (char *name) {
+struct bg_arena *bg_name2arena(const char *name)
+{
 	int i;
 	nullpo_retr(NULL, name);
 	for(i = 0; i < bg->arenas; i++) {
@@ -655,7 +675,7 @@ int bg_afk_timer(int tid, int64 tick, int id, intptr_t data) {
 	int count = 0;
 
 	iter = mapit_getallusers();
-	for( sd = (TBL_PC*)mapit->first(iter); mapit->exists(iter); sd = (TBL_PC*)mapit->next(iter) ) {
+	for (sd = BL_UCAST(BL_PC, mapit->first(iter)); mapit->exists(iter); sd = BL_UCAST(BL_PC, mapit->next(iter))) {
 		if( !sd->bg_queue.arena || !sd->bg_id )
 			continue;
 		if( DIFF_TICK(sockt->last_tick, sd->idletime) > bg->mafksec )
@@ -810,9 +830,9 @@ enum BATTLEGROUNDS_QUEUE_ACK bg_canqueue(struct map_session_data *sd, struct bg_
 	if ( ( tick = pc_readglobalreg(sd, script->add_str(bg->gdelay_var)) ) && tsec < tick ) {
 		char response[100];
 		if( (tick-tsec) > 60 )
-			sprintf(response, "You are a deserter! Wait %d minute(s) before you can apply again",(tick-tsec)/60);
+			sprintf(response, "You are a deserter! Wait %u minute(s) before you can apply again", (tick - tsec) / 60);
 		else
-			sprintf(response, "You are a deserter! Wait %d seconds before you can apply again",(tick-tsec));
+			sprintf(response, "You are a deserter! Wait %u seconds before you can apply again", (tick - tsec));
 		clif->messagecolor_self(sd->fd, COLOR_RED, response);
 		return BGQA_FAIL_DESERTER;
 	}
@@ -820,9 +840,9 @@ enum BATTLEGROUNDS_QUEUE_ACK bg_canqueue(struct map_session_data *sd, struct bg_
 	if ( ( tick = pc_readglobalreg(sd, script->add_str(arena->delay_var)) ) && tsec < tick ) {
 		char response[100];
 		if( (tick-tsec) > 60 )
-			sprintf(response, "You can't reapply to this arena so fast. Apply to the different arena or wait %d minute(s)",(tick-tsec)/60);
+			sprintf(response, "You can't reapply to this arena so fast. Apply to the different arena or wait %u minute(s)", (tick - tsec) / 60);
 		else
-			sprintf(response, "You can't reapply to this arena so fast. Apply to the different arena or wait %d seconds",(tick-tsec));
+			sprintf(response, "You can't reapply to this arena so fast. Apply to the different arena or wait %u seconds", (tick - tsec));
 		clif->messagecolor_self(sd->fd, COLOR_RED, response);
 		return BGQA_FAIL_COOLDOWN;
 	}
@@ -889,7 +909,7 @@ enum BATTLEGROUNDS_QUEUE_ACK bg_canqueue(struct map_session_data *sd, struct bg_
 		case BGQT_INDIVIDUAL:/* already did */
 			break;
 		default:
-			ShowDebug("bg_canqueue: unknown/unsupported type %d\n",type);
+			ShowDebug("bg_canqueue: unknown/unsupported type %u\n", type);
 			return BGQA_DUPLICATE_REQUEST;
 	}
 	return BGQA_SUCCESS;
@@ -907,7 +927,8 @@ void do_init_battleground(bool minimal) {
 /**
  * @see DBApply
  */
-int bg_team_db_final(DBKey key, DBData *data, va_list ap) {
+int bg_team_db_final(union DBKey key, struct DBData *data, va_list ap)
+{
 	struct battleground_data* bgd = DB->data2ptr(data);
 
 	HPM->data_store_destroy(&bgd->hdata);

@@ -93,7 +93,8 @@ struct view_data {
 		head_bottom,
 		hair_style,
 		hair_color,
-		cloth_color;
+		cloth_color,
+		body_style;
 	char sex;
 	unsigned dead_sit : 2;
 };
@@ -104,6 +105,7 @@ struct unit_interface {
 	/* */
 	struct unit_data* (*bl2ud) (struct block_list *bl);
 	struct unit_data* (*bl2ud2) (struct block_list *bl);
+	void (*init_ud) (struct unit_data *ud);
 	int (*attack_timer) (int tid, int64 tick, int id, intptr_t data);
 	int (*walktoxy_timer) (int tid, int64 tick, int id, intptr_t data);
 	int (*walktoxy_sub) (struct block_list *bl);

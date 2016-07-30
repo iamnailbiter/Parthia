@@ -43,6 +43,8 @@ struct status_data;
 #define MAX_HAIR_COLOR  (battle->bc->max_hair_color)
 #define MIN_CLOTH_COLOR (battle->bc->min_cloth_color)
 #define MAX_CLOTH_COLOR (battle->bc->max_cloth_color)
+#define MIN_BODY_STYLE (battle->bc->min_body_style)
+#define MAX_BODY_STYLE (battle->bc->max_body_style)
 
 #define is_boss(bl)     (status_get_mode(bl)&MD_BOSS) // Can refine later [Aru]
 
@@ -529,9 +531,17 @@ struct Battle_Config {
 	int show_monster_hp_bar; // [Frost]
 
 	int fix_warp_hit_delay_abuse;
-	
+
+	// Refine Def/Atk
 	int costume_refine_def, shadow_refine_def;
 	int shadow_refine_atk;
+
+	// BodyStyle
+	int min_body_style, max_body_style;
+	int save_body_style;
+
+	// Warp Face Direction
+	int player_warp_keep_direction;
 };
 
 /* criteria for battle_config.idletime_critera */
@@ -580,12 +590,16 @@ struct battle_interface {
 	struct Damage (*calc_attack) (int attack_type, struct block_list *bl, struct block_list *target, uint16 skill_id, uint16 skill_lv, int count);
 	/* generic final damage calculation */
 	int64 (*calc_damage) (struct block_list *src, struct block_list *bl, struct Damage *d, int64 damage, uint16 skill_id, uint16 skill_lv);
+	/* pc special damage calculation */
+	int64 (*calc_pc_damage) (struct block_list *src, struct block_list *bl, struct Damage *d, int64 damage, uint16 skill_id, uint16 skill_lv);
 	/* gvg final damage calculation */
 	int64 (*calc_gvg_damage) (struct block_list *src, struct block_list *bl, int64 damage, int div_, uint16 skill_id, uint16 skill_lv, int flag);
 	/* battlegrounds final damage calculation */
 	int64 (*calc_bg_damage) (struct block_list *src, struct block_list *bl, int64 damage, int div_, uint16 skill_id, uint16 skill_lv, int flag);
 	/* normal weapon attack */
 	enum damage_lv (*weapon_attack) (struct block_list *bl, struct block_list *target, int64 tick, int flag);
+	/* check is equipped ammo and this ammo allowed */
+	bool (*check_arrows) (struct map_session_data *sd);
 	/* calculate weapon attack */
 	struct Damage (*calc_weapon_attack) (struct block_list *src,struct block_list *target,uint16 skill_id,uint16 skill_lv,int wflag);
 	/* delays damage or skills by a timer */

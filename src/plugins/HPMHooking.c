@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2013-2015  Hercules Dev Team
+ * Copyright (C) 2013-2016  Hercules Dev Team
  *
  * Hercules is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include "HPMHooking.h"
+
 #include "common/hercules.h"
 #include "common/db.h"
 #include "common/memmgr.h"
@@ -29,6 +32,8 @@
 #define HPM_HOOKS_INCLUDE "HPMHooking/HPMHooking_login.Hooks.inc"
 #define HPM_POINTS_INCLUDE "HPMHooking/HPMHooking_login.HookingPoints.inc"
 #define HPM_SOURCES_INCLUDE "HPMHooking/HPMHooking_login.sources.inc"
+#include "login/lclif.h"
+#include "login/lclif.p.h"
 #include "login/login.h"
 #elif defined (HPMHOOKING_CHAR)
 #define HPM_SERVER_TYPE SERVER_TYPE_CHAR
@@ -92,6 +97,7 @@
 #include "map/storage.h"
 #include "map/trade.h"
 #include "map/unit.h"
+#include "common/grfio.h"
 #include "common/mapindex.h"
 #else
 #define HPM_SERVER_TYPE SERVER_TYPE_UNKNOWN
@@ -104,13 +110,18 @@
 #include "common/conf.h"
 #include "common/console.h"
 #include "common/db.h"
+#include "common/des.h"
+#include "common/md5calc.h"
 #include "common/memmgr.h"
+#include "common/mutex.h"
 #include "common/nullpo.h"
+#include "common/random.h"
 #include "common/showmsg.h"
 #include "common/socket.h"
 #include "common/sql.h"
 #include "common/strlib.h"
 #include "common/sysinfo.h"
+#include "common/thread.h"
 #include "common/timer.h"
 #include "common/utils.h"
 
@@ -128,7 +139,7 @@ HPExport struct hplugin_info pinfo = {
 };
 
 #define HP_POP(x,y) #x , (void**)(&x) , (void*)y , 0
-DBMap *hp_db;/* hooking points db -- for quick lookup */
+struct DBMap *hp_db;/* hooking points db -- for quick lookup */
 
 struct HookingPointData {
 	char* name;

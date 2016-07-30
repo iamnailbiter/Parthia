@@ -21,9 +21,9 @@
 #ifndef MAP_CHRIF_H
 #define MAP_CHRIF_H
 
-#include "map/map.h" //TBL_PC
 #include "common/hercules.h"
 #include "common/db.h"
+#include "common/mmo.h"
 
 struct eri;
 struct map_session_data;
@@ -72,7 +72,7 @@ struct chrif_interface {
 
 	/* */
 	struct eri *auth_db_ers; //For re-utilizing player login structures.
-	DBMap* auth_db; // int id -> struct auth_node*
+	struct DBMap *auth_db; // int id -> struct auth_node*
 	/* */
 	int packet_len_table[CHRIF_PACKET_LEN_TABLE_SIZE];
 	int fd;
@@ -129,14 +129,14 @@ struct chrif_interface {
 	bool (*flush) (void);
 	void (*skillid2idx) (int fd);
 
-	bool (*sd_to_auth) (TBL_PC* sd, enum sd_state state);
+	bool (*sd_to_auth) (struct map_session_data *sd, enum sd_state state);
 	int (*check_connect_char_server) (int tid, int64 tick, int id, intptr_t data);
-	bool (*auth_logout) (TBL_PC* sd, enum sd_state state);
+	bool (*auth_logout) (struct map_session_data *sd, enum sd_state state);
 	void (*save_ack) (int fd);
-	int (*reconnect) (DBKey key, DBData *data, va_list ap);
-	int (*auth_db_cleanup_sub) (DBKey key, DBData *data, va_list ap);
+	int (*reconnect) (union DBKey key, struct DBData *data, va_list ap);
+	int (*auth_db_cleanup_sub) (union DBKey key, struct DBData *data, va_list ap);
 	bool (*char_ask_name_answer) (int acc, const char* player_name, uint16 type, uint16 answer);
-	int (*auth_db_final) (DBKey key, DBData *data, va_list ap);
+	int (*auth_db_final) (union DBKey key, struct DBData *data, va_list ap);
 	int (*send_usercount_tochar) (int tid, int64 tick, int id, intptr_t data);
 	int (*auth_db_cleanup) (int tid, int64 tick, int id, intptr_t data);
 

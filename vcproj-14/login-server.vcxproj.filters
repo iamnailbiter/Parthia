@@ -31,6 +31,9 @@
     <ClCompile Include="..\src\common\ers.c">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\common\grfio.c">
+      <Filter>common</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\common\HPM.c">
       <Filter>common</Filter>
     </ClCompile>
@@ -94,6 +97,9 @@
     <ClCompile Include="..\src\common\des.c">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\login\lclif.c">
+      <Filter>login</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\login\account.h">
@@ -127,6 +133,9 @@
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\src\common\ers.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\grfio.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\src\common\HPM.h">
@@ -236,6 +245,12 @@
     </ClInclude>
     <ClInclude Include="..\src\config\classes\general.h">
       <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\login\lclif.h">
+      <Filter>login</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\login\lclif.p.h">
+      <Filter>login</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

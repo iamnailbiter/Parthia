@@ -21,7 +21,6 @@
 #ifndef MAP_PARTY_H
 #define MAP_PARTY_H
 
-#include "map/map.h" // TBL_PC
 #include "common/hercules.h"
 #include "common/db.h"
 #include "common/mmo.h" // struct party
@@ -31,7 +30,9 @@
 #define PARTY_BOOKING_JOBS 6
 #define PARTY_BOOKING_RESULTS 10
 
+struct block_list;
 struct hplugin_data_store;
+struct map_session_data;
 
 struct party_member_data {
 	struct map_session_data *sd;
@@ -84,8 +85,8 @@ struct party_booking_ad_info {
 * created by Susu
 *-------------------------------------*/
 struct party_interface {
-	DBMap* db; // int party_id -> struct party_data* (releases data)
-	DBMap* booking_db; // int char_id -> struct party_booking_ad_info* (releases data) // Party Booking [Spiria]
+	struct DBMap *db; // int party_id -> struct party_data* (releases data)
+	struct DBMap *booking_db; // int char_id -> struct party_booking_ad_info* (releases data) // Party Booking [Spiria]
 	unsigned int booking_nextid;
 	/* funcs */
 	void (*init) (bool minimal);
@@ -96,18 +97,18 @@ struct party_interface {
 	int (*getmemberid) (struct party_data* p, struct map_session_data* sd);
 	struct map_session_data* (*getavailablesd) (struct party_data *p);
 
-	int (*create) (struct map_session_data *sd,char *name, int item, int item2);
-	void (*created) (int account_id,int char_id,int fail,int party_id,char *name);
+	int (*create) (struct map_session_data *sd, const char *name, int item, int item2);
+	void (*created) (int account_id, int char_id, int fail, int party_id, const char *name);
 	int (*request_info) (int party_id, int char_id);
 	int (*invite) (struct map_session_data *sd,struct map_session_data *tsd);
 	void (*member_joined) (struct map_session_data *sd);
 	int (*member_added) (int party_id,int account_id,int char_id,int flag);
 	int (*leave) (struct map_session_data *sd);
-	int (*removemember) (struct map_session_data *sd,int account_id,char *name);
+	int (*removemember) (struct map_session_data *sd, int account_id, const char *name);
 	int (*member_withdraw) (int party_id,int account_id,int char_id);
 	void (*reply_invite) (struct map_session_data *sd,int party_id,int flag);
 	int (*recv_noinfo) (int party_id, int char_id);
-	int (*recv_info) (struct party* sp, int char_id);
+	int (*recv_info) (const struct party *sp, int char_id);
 	int (*recv_movemap) (int party_id,int account_id,int char_id, unsigned short mapid,int online,int lv);
 	int (*broken) (int party_id);
 	int (*optionchanged) (int party_id,int account_id,int exp,int item,int flag);
@@ -116,7 +117,7 @@ struct party_interface {
 	void (*send_movemap) (struct map_session_data *sd);
 	void (*send_levelup) (struct map_session_data *sd);
 	int (*send_logout) (struct map_session_data *sd);
-	int (*send_message) (struct map_session_data *sd,const char *mes,int len);
+	int (*send_message) (struct map_session_data *sd, const char *mes);
 	int (*recv_message) (int party_id,int account_id,const char *mes,int len);
 	int (*skill_check) (struct map_session_data *sd, int party_id, uint16 skill_id, uint16 skill_lv);
 	int (*send_xy_clear) (struct party_data *p);
@@ -141,10 +142,10 @@ struct party_interface {
 	int (*foreachsamemap) (int (*func)(struct block_list *,va_list),struct map_session_data *sd,int range,...);
 	int (*send_xy_timer) (int tid, int64 tick, int id, intptr_t data);
 	void (*fill_member) (struct party_member* member, struct map_session_data* sd, unsigned int leader);
-	TBL_PC* (*sd_check) (int party_id, int account_id, int char_id);
+	struct map_session_data *(*sd_check) (int party_id, int account_id, int char_id);
 	void (*check_state) (struct party_data *p);
 	struct party_booking_ad_info* (*create_booking_data) (void);
-	int (*db_final) (DBKey key, DBData *data, va_list ap);
+	int (*db_final) (union DBKey key, struct DBData *data, va_list ap);
 };
 
 #ifdef HERCULES_CORE

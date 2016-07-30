@@ -23,6 +23,8 @@
  *       as it will get overwritten.
  */
 
+/* GENERATED FILE DO NOT EDIT */
+
 #ifndef HPM_DATA_CHECK_H
 #define HPM_DATA_CHECK_H
 
@@ -148,7 +150,8 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 		#define COMMON_DB_H
 	#endif // COMMON_DB_H
 	#ifdef COMMON_DES_H
-		{ "BIT64", sizeof(struct BIT64), SERVER_TYPE_ALL },
+		{ "des_bit64", sizeof(struct des_bit64), SERVER_TYPE_ALL },
+		{ "des_interface", sizeof(struct des_interface), SERVER_TYPE_ALL },
 	#else
 		#define COMMON_DES_H
 	#endif // COMMON_DES_H
@@ -157,6 +160,11 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 	#else
 		#define COMMON_ERS_H
 	#endif // COMMON_ERS_H
+	#ifdef COMMON_GRFIO_H
+		{ "grfio_interface", sizeof(struct grfio_interface), SERVER_TYPE_MAP },
+	#else
+		#define COMMON_GRFIO_H
+	#endif // COMMON_GRFIO_H
 	#ifdef COMMON_HPMI_H
 		{ "HPMi_interface", sizeof(struct HPMi_interface), SERVER_TYPE_ALL },
 		{ "hplugin_info", sizeof(struct hplugin_info), SERVER_TYPE_ALL },
@@ -169,6 +177,11 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 	#else
 		#define COMMON_MAPINDEX_H
 	#endif // COMMON_MAPINDEX_H
+	#ifdef COMMON_MD5CALC_H
+		{ "md5_interface", sizeof(struct md5_interface), SERVER_TYPE_ALL },
+	#else
+		#define COMMON_MD5CALC_H
+	#endif // COMMON_MD5CALC_H
 	#ifdef COMMON_MEMMGR_H
 		{ "malloc_interface", sizeof(struct malloc_interface), SERVER_TYPE_ALL },
 	#else
@@ -208,11 +221,21 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 	#else
 		#define COMMON_MMO_H
 	#endif // COMMON_MMO_H
+	#ifdef COMMON_MUTEX_H
+		{ "mutex_interface", sizeof(struct mutex_interface), SERVER_TYPE_ALL },
+	#else
+		#define COMMON_MUTEX_H
+	#endif // COMMON_MUTEX_H
 	#ifdef COMMON_NULLPO_H
 		{ "nullpo_interface", sizeof(struct nullpo_interface), SERVER_TYPE_ALL },
 	#else
 		#define COMMON_NULLPO_H
 	#endif // COMMON_NULLPO_H
+	#ifdef COMMON_RANDOM_H
+		{ "rnd_interface", sizeof(struct rnd_interface), SERVER_TYPE_ALL },
+	#else
+		#define COMMON_RANDOM_H
+	#endif // COMMON_RANDOM_H
 	#ifdef COMMON_SHOWMSG_H
 		{ "showmsg_interface", sizeof(struct showmsg_interface), SERVER_TYPE_ALL },
 	#else
@@ -228,7 +251,7 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 		#define COMMON_SOCKET_H
 	#endif // COMMON_SOCKET_H
 	#ifdef COMMON_SPINLOCK_H
-		{ "SPIN_LOCK", sizeof(struct SPIN_LOCK), SERVER_TYPE_ALL },
+		{ "spin_lock", sizeof(struct spin_lock), SERVER_TYPE_ALL },
 	#else
 		#define COMMON_SPINLOCK_H
 	#endif // COMMON_SPINLOCK_H
@@ -251,6 +274,11 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 	#else
 		#define COMMON_SYSINFO_H
 	#endif // COMMON_SYSINFO_H
+	#ifdef COMMON_THREAD_H
+		{ "thread_interface", sizeof(struct thread_interface), SERVER_TYPE_ALL },
+	#else
+		#define COMMON_THREAD_H
+	#endif // COMMON_THREAD_H
 	#ifdef COMMON_TIMER_H
 		{ "TimerData", sizeof(struct TimerData), SERVER_TYPE_ALL },
 		{ "timer_interface", sizeof(struct timer_interface), SERVER_TYPE_ALL },
@@ -270,6 +298,32 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 	#else
 		#define LOGIN_ACCOUNT_H
 	#endif // LOGIN_ACCOUNT_H
+	#ifdef LOGIN_LCLIF_H
+		{ "lclif_interface", sizeof(struct lclif_interface), SERVER_TYPE_LOGIN },
+		{ "login_packet_db", sizeof(struct login_packet_db), SERVER_TYPE_LOGIN },
+	#else
+		#define LOGIN_LCLIF_H
+	#endif // LOGIN_LCLIF_H
+	#ifdef LOGIN_LCLIF_P_H
+		{ "lclif_interface_dbs", sizeof(struct lclif_interface_dbs), SERVER_TYPE_LOGIN },
+		{ "lclif_interface_private", sizeof(struct lclif_interface_private), SERVER_TYPE_LOGIN },
+		{ "packet_AC_ACCEPT_LOGIN", sizeof(struct packet_AC_ACCEPT_LOGIN), SERVER_TYPE_LOGIN },
+		{ "packet_AC_REFUSE_LOGIN", sizeof(struct packet_AC_REFUSE_LOGIN), SERVER_TYPE_LOGIN },
+		{ "packet_AC_REFUSE_LOGIN_R2", sizeof(struct packet_AC_REFUSE_LOGIN_R2), SERVER_TYPE_LOGIN },
+		{ "packet_CA_CHARSERVERCONNECT", sizeof(struct packet_CA_CHARSERVERCONNECT), SERVER_TYPE_LOGIN },
+		{ "packet_CA_CONNECT_INFO_CHANGED", sizeof(struct packet_CA_CONNECT_INFO_CHANGED), SERVER_TYPE_LOGIN },
+		{ "packet_CA_EXE_HASHCHECK", sizeof(struct packet_CA_EXE_HASHCHECK), SERVER_TYPE_LOGIN },
+		{ "packet_CA_LOGIN", sizeof(struct packet_CA_LOGIN), SERVER_TYPE_LOGIN },
+		{ "packet_CA_LOGIN2", sizeof(struct packet_CA_LOGIN2), SERVER_TYPE_LOGIN },
+		{ "packet_CA_LOGIN3", sizeof(struct packet_CA_LOGIN3), SERVER_TYPE_LOGIN },
+		{ "packet_CA_LOGIN4", sizeof(struct packet_CA_LOGIN4), SERVER_TYPE_LOGIN },
+		{ "packet_CA_LOGIN_HAN", sizeof(struct packet_CA_LOGIN_HAN), SERVER_TYPE_LOGIN },
+		{ "packet_CA_LOGIN_PCBANG", sizeof(struct packet_CA_LOGIN_PCBANG), SERVER_TYPE_LOGIN },
+		{ "packet_CA_SSO_LOGIN_REQ", sizeof(struct packet_CA_SSO_LOGIN_REQ), SERVER_TYPE_LOGIN },
+		{ "packet_SC_NOTIFY_BAN", sizeof(struct packet_SC_NOTIFY_BAN), SERVER_TYPE_LOGIN },
+	#else
+		#define LOGIN_LCLIF_P_H
+	#endif // LOGIN_LCLIF_P_H
 	#ifdef LOGIN_LOGIN_H
 		{ "Login_Config", sizeof(struct Login_Config), SERVER_TYPE_LOGIN },
 		{ "client_hash_node", sizeof(struct client_hash_node), SERVER_TYPE_LOGIN },
@@ -388,6 +442,7 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 	#ifdef MAP_IRC_BOT_H
 		{ "irc_bot_interface", sizeof(struct irc_bot_interface), SERVER_TYPE_MAP },
 		{ "irc_func", sizeof(struct irc_func), SERVER_TYPE_MAP },
+		{ "message_flood", sizeof(struct message_flood), SERVER_TYPE_MAP },
 	#else
 		#define MAP_IRC_BOT_H
 	#endif // MAP_IRC_BOT_H
@@ -402,6 +457,8 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 		{ "item_package_rand_entry", sizeof(struct item_package_rand_entry), SERVER_TYPE_MAP },
 		{ "item_package_rand_group", sizeof(struct item_package_rand_group), SERVER_TYPE_MAP },
 		{ "itemdb_interface", sizeof(struct itemdb_interface), SERVER_TYPE_MAP },
+		{ "itemlist", sizeof(struct itemlist), SERVER_TYPE_MAP },
+		{ "itemlist_entry", sizeof(struct itemlist_entry), SERVER_TYPE_MAP },
 	#else
 		#define MAP_ITEMDB_H
 	#endif // MAP_ITEMDB_H
@@ -504,6 +561,7 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 		{ "packet_bgqueue_revoke_req", sizeof(struct packet_bgqueue_revoke_req), SERVER_TYPE_MAP },
 		{ "packet_bgqueue_update_info", sizeof(struct packet_bgqueue_update_info), SERVER_TYPE_MAP },
 		{ "packet_cart_additem_ack", sizeof(struct packet_cart_additem_ack), SERVER_TYPE_MAP },
+		{ "packet_chat_message", sizeof(struct packet_chat_message), SERVER_TYPE_MAP },
 		{ "packet_damage", sizeof(struct packet_damage), SERVER_TYPE_MAP },
 		{ "packet_dropflooritem", sizeof(struct packet_dropflooritem), SERVER_TYPE_MAP },
 		{ "packet_equip_item", sizeof(struct packet_equip_item), SERVER_TYPE_MAP },
@@ -546,6 +604,7 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 		{ "packet_unequipitem_ack", sizeof(struct packet_unequipitem_ack), SERVER_TYPE_MAP },
 		{ "packet_unit_walking", sizeof(struct packet_unit_walking), SERVER_TYPE_MAP },
 		{ "packet_viewequip_ack", sizeof(struct packet_viewequip_ack), SERVER_TYPE_MAP },
+		{ "packet_whisper_message", sizeof(struct packet_whisper_message), SERVER_TYPE_MAP },
 		{ "packet_wis_end", sizeof(struct packet_wis_end), SERVER_TYPE_MAP },
 	#else
 		#define MAP_PACKETS_STRUCT_H
@@ -617,6 +676,7 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 		{ "casecheck_data", sizeof(struct casecheck_data), SERVER_TYPE_MAP },
 		{ "reg_db", sizeof(struct reg_db), SERVER_TYPE_MAP },
 		{ "script_array", sizeof(struct script_array), SERVER_TYPE_MAP },
+		{ "script_buf", sizeof(struct script_buf), SERVER_TYPE_MAP },
 		{ "script_code", sizeof(struct script_code), SERVER_TYPE_MAP },
 		{ "script_data", sizeof(struct script_data), SERVER_TYPE_MAP },
 		{ "script_function", sizeof(struct script_function), SERVER_TYPE_MAP },
@@ -631,6 +691,7 @@ HPExport const struct s_HPMDataCheck HPMDataCheck[] = {
 		{ "script_syntax_data", sizeof(struct script_syntax_data), SERVER_TYPE_MAP },
 		{ "str_data_struct", sizeof(struct str_data_struct), SERVER_TYPE_MAP },
 		{ "string_translation", sizeof(struct string_translation), SERVER_TYPE_MAP },
+		{ "string_translation_entry", sizeof(struct string_translation_entry), SERVER_TYPE_MAP },
 	#else
 		#define MAP_SCRIPT_H
 	#endif // MAP_SCRIPT_H

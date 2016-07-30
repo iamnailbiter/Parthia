@@ -74,8 +74,7 @@ void vending_vendinglistreq(struct map_session_data* sd, unsigned int id) {
 		return; // not vending
 
 	if (!pc_can_give_items(sd) || !pc_can_give_items(vsd)) { //check if both GMs are allowed to trade
-		// GM is not allowed to trade
-		clif->message(sd->fd, msg_sd(sd,246));
+		clif->message(sd->fd, msg_sd(sd,246)); // Your GM level doesn't authorize you to perform this action.
 		return;
 	}
 
@@ -89,7 +88,7 @@ void vending_vendinglistreq(struct map_session_data* sd, unsigned int id) {
  *------------------------------------------*/
 void vending_purchasereq(struct map_session_data* sd, int aid, unsigned int uid, const uint8* data, int count) {
 	int i, j, cursor, w, new_ = 0, blank, vend_list[MAX_VENDING];
-	double z;
+	int64 z;
 	struct s_vending vend[MAX_VENDING]; // against duplicate packets
 	struct map_session_data* vsd = map->id2sd(aid);
 
@@ -116,11 +115,11 @@ void vending_purchasereq(struct map_session_data* sd, int aid, unsigned int uid,
 	memcpy(&vend, &vsd->vending, sizeof(vsd->vending)); // copy vending list
 
 	// some checks
-	z = 0.; // zeny counter
+	z = 0; // zeny counter
 	w = 0;  // weight counter
-	for( i = 0; i < count; i++ ) {
-		short amount = *(uint16*)(data + 4*i + 0);
-		short idx    = *(uint16*)(data + 4*i + 2);
+	for (i = 0; i < count; i++) {
+		short amount = *(const uint16*)(data + 4*i + 0);
+		short idx    = *(const uint16*)(data + 4*i + 2);
 		idx -= 2;
 
 		if( amount <= 0 )
@@ -136,12 +135,12 @@ void vending_purchasereq(struct map_session_data* sd, int aid, unsigned int uid,
 		else
 			vend_list[i] = j;
 
-		z += ((double)vsd->vending[j].value * (double)amount);
-		if( z > (double)sd->status.zeny || z < 0. || z > (double)MAX_ZENY ) {
+		z += (int64)vsd->vending[j].value * amount;
+		if (z > sd->status.zeny || z < 0 || z > MAX_ZENY) {
 			clif->buyvending(sd, idx, amount, 1); // you don't have enough zeny
 			return;
 		}
-		if( z + (double)vsd->status.zeny > (double)MAX_ZENY && !battle_config.vending_over_max ) {
+		if (z > MAX_ZENY - vsd->status.zeny && !battle_config.vending_over_max) {
 			clif->buyvending(sd, idx, vsd->vending[j].amount, 4); // too much zeny = overflow
 			return;
 
@@ -181,12 +180,12 @@ void vending_purchasereq(struct map_session_data* sd, int aid, unsigned int uid,
 
 	pc->payzeny(sd, (int)z, LOG_TYPE_VENDING, vsd);
 	if( battle_config.vending_tax )
-		z -= z * (battle_config.vending_tax/10000.);
+		z -= apply_percentrate64(z, battle_config.vending_tax, 10000);
 	pc->getzeny(vsd, (int)z, LOG_TYPE_VENDING, sd);
 
-	for( i = 0; i < count; i++ ) {
-		short amount = *(uint16*)(data + 4*i + 0);
-		short idx    = *(uint16*)(data + 4*i + 2);
+	for (i = 0; i < count; i++) {
+		short amount = *(const uint16*)(data + 4*i + 0);
+		short idx    = *(const uint16*)(data + 4*i + 2);
 		idx -= 2;
 
 		// vending item
@@ -199,7 +198,7 @@ void vending_purchasereq(struct map_session_data* sd, int aid, unsigned int uid,
 		if( battle_config.buyer_name ) {
 			char temp[256];
 			sprintf(temp, msg_sd(vsd,265), sd->status.name);
-			clif_disp_onlyself(vsd,temp,strlen(temp));
+			clif_disp_onlyself(vsd, temp);
 		}
 	}
 
@@ -265,10 +264,10 @@ void vending_openvending(struct map_session_data* sd, const char* message, const
 
 	// filter out invalid items
 	i = 0;
-	for( j = 0; j < count; j++ ) {
-		short index        = *(uint16*)(data + 8*j + 0);
-		short amount       = *(uint16*)(data + 8*j + 2);
-		unsigned int value = *(uint32*)(data + 8*j + 4);
+	for (j = 0; j < count; j++) {
+		short index        = *(const uint16*)(data + 8*j + 0);
+		short amount       = *(const uint16*)(data + 8*j + 2);
+		unsigned int value = *(const uint32*)(data + 8*j + 4);
 
 		index -= 2; // offset adjustment (client says that the first cart position is 2)
 
@@ -276,7 +275,7 @@ void vending_openvending(struct map_session_data* sd, const char* message, const
 		 || pc->cartitem_amount(sd, index, amount) < 0 // invalid item or insufficient quantity
 		//NOTE: official server does not do any of the following checks!
 		 || !sd->status.cart[index].identify // unidentified item
-		 || sd->status.cart[index].attribute == 1 // broken item
+		 || (sd->status.cart[index].attribute & ATTR_BROKEN) != 0 // broken item
 		 || sd->status.cart[index].expire_time // It should not be in the cart but just in case
 		 || (sd->status.cart[index].bound && !pc_can_give_bound_items(sd)) // can't trade bound items w/o permission
 		 || !itemdb_cantrade(&sd->status.cart[index], pc_get_group_level(sd), pc_get_group_level(sd)) ) // untradeable item
