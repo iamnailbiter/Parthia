@@ -39,7 +39,7 @@
 //=========================================================================
 
 //== Morroc ================================================
-morocc,150,120,5	script	Soldier - Morroc#01::MocSoldier	4_M_MOC_SOLDIER,3,3,{
+morocc,155,117,6	script	Soldier - Morroc#01::MocSoldier	4_M_MOC_SOLDIER,3,3,{
 	mes "[Morroc Soldier]";
 	mes "Hey, you! Stop there.";
 	next;
